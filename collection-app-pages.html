@@ -1,0 +1,3441 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>收款功能 App 互动原型</title>
+  <style>
+    :root {
+      --ink: #0f172a;
+      --ink-2: #1e293b;
+      --muted: #64748b;
+      --soft: #94a3b8;
+      --line: #e2e8f0;
+      --line-strong: #cbd5e1;
+      --page: #f6f8fb;
+      --card: #ffffff;
+      --bg: #f1f5f9;
+
+      --mint: #10b981;
+      --mint-soft: #ecfdf5;
+      --mint-ink: #047857;
+
+      --primary: #0054ff;
+      --primary-soft: #e6efff;
+      --primary-ink: #003fcc;
+
+      --sky: #0054ff;
+      --sky-2: #003fcc;
+      --sky-soft: #e6efff;
+      --sky-ink: #003fcc;
+
+      --coral: #ef4444;
+      --coral-soft: #fef2f2;
+      --coral-ink: #b91c1c;
+
+      --amber: #f59e0b;
+      --amber-soft: #fffbeb;
+      --amber-ink: #b45309;
+
+      --violet: #8b5cf6;
+      --violet-soft: #f5f3ff;
+      --violet-ink: #6d28d9;
+
+      --shadow-sm: 0 1px 2px rgba(15,23,42,.04);
+      --shadow-md: 0 4px 14px rgba(15,23,42,.06), 0 1px 3px rgba(15,23,42,.04);
+      --shadow-lg: 0 16px 36px rgba(15,23,42,.10), 0 4px 10px rgba(15,23,42,.05);
+
+      --r-sm: 10px;
+      --r-md: 14px;
+      --r-lg: 18px;
+      --r-xl: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { -webkit-font-smoothing: antialiased; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 100% -10%, #dbeafe55, transparent 60%),
+        radial-gradient(900px 500px at -10% 110%, #ede9fe55, transparent 60%),
+        #eef2f7;
+      min-height: 100vh;
+    }
+
+    button { font: inherit; cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .stage {
+      width: min(1480px, calc(100vw - 40px));
+      margin: 28px auto 60px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      gap: 22px;
+      align-items: flex-end;
+      margin-bottom: 20px;
+    }
+
+    h1 { margin: 0; font-size: 30px; line-height: 1.2; letter-spacing: -0.01em; }
+    .sub { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 720px; }
+
+    .route-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: flex-end;
+      max-width: 56vw;
+    }
+    .route-tabs button {
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0 12px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 700;
+      transition: all .15s ease;
+    }
+    .route-tabs button:hover { color: var(--ink); border-color: var(--line-strong); }
+    .route-tabs button.active {
+      border-color: var(--sky);
+      background: var(--sky);
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(0,84,255,.28);
+    }
+
+    .devices {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .device-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 4px 10px;
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+    .hint { color: var(--soft); font-weight: 600; }
+
+    .phone-shell, .pad-shell {
+      background: linear-gradient(180deg, #1f2937, #0f172a);
+      box-shadow: 0 30px 60px -20px rgba(15,23,42,.35), 0 10px 30px rgba(15,23,42,.18);
+    }
+    .phone-shell { border-radius: 44px; padding: 12px; }
+    .pad-shell { border-radius: 28px; padding: 12px; }
+
+    .screen {
+      background: var(--page);
+      min-height: 820px;
+      border-radius: 32px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .pad-screen { min-height: 720px; border-radius: 18px; }
+
+    .status {
+      height: 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      flex: 0 0 auto;
+    }
+    .status .right { display: inline-flex; align-items: center; gap: 6px; }
+    .status svg { display: block; }
+
+    .nav {
+      height: 52px;
+      display: grid;
+      grid-template-columns: 44px 1fr 80px;
+      align-items: center;
+      padding: 0 12px;
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      flex: 0 0 auto;
+    }
+    .pad .nav { grid-template-columns: 44px 1fr auto; }
+
+    .back {
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      border: 0; border-radius: 12px;
+      background: var(--bg); color: var(--ink);
+    }
+    .back:hover { background: var(--line); }
+
+    .nav h2 {
+      margin: 0;
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .nav-action {
+      min-width: 64px; height: 30px;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 0 10px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--sky-soft); color: var(--sky-ink);
+      font-size: 12.5px; font-weight: 700;
+      justify-self: end;
+    }
+
+    .content {
+      padding: 14px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .content > * + * { margin-top: 12px; }
+
+    /* Hero — slimmed down with Chinese eyebrow chip */
+    .hero {
+      position: relative;
+      padding: 14px 16px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(135deg, #ffffff 0%, #e6efff 100%);
+      border: 1px solid #d2dcff;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(0,84,255,.10), transparent);
+    }
+    .hero.settle { background: linear-gradient(135deg, #ffffff, #fffbeb); border-color: #fde8b0; }
+    .hero.settle::after { background: radial-gradient(closest-side, rgba(245,158,11,.12), transparent); }
+    .hero.notice { background: linear-gradient(135deg, #ffffff, #fef2f2); border-color: #fecaca; }
+    .hero.notice::after { background: radial-gradient(closest-side, rgba(239,68,68,.10), transparent); }
+    .hero.detail { background: linear-gradient(135deg, #ffffff, #f5f3ff); border-color: #ddd6fe; }
+    .hero.detail::after { background: radial-gradient(closest-side, rgba(139,92,246,.10), transparent); }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 5px;
+      height: 22px; padding: 0 9px;
+      border-radius: 999px;
+      background: rgba(0,84,255,.12); color: var(--sky-ink);
+      font-size: 11px; font-weight: 700; letter-spacing: .04em;
+    }
+    .hero.settle .hero-eyebrow { background: rgba(245,158,11,.14); color: var(--amber-ink); }
+    .hero.notice .hero-eyebrow { background: rgba(239,68,68,.10); color: var(--coral-ink); }
+    .hero.detail .hero-eyebrow { background: rgba(139,92,246,.14); color: var(--violet-ink); }
+
+    .hero h3 { margin: 8px 0 4px; font-size: 19px; line-height: 1.3; font-weight: 700; }
+    .hero p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.55; }
+
+    /* Card system */
+    .card {
+      padding: 14px;
+      background: var(--card);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+    .card.flat { box-shadow: none; }
+    .card.tint-sky { background: linear-gradient(180deg, var(--sky-soft), #fff); border-color: #cfdcff; }
+    .card.tint-mint { background: linear-gradient(180deg, var(--mint-soft), #fff); border-color: #bbf7d0; }
+    .card.tint-amber { background: linear-gradient(180deg, var(--amber-soft), #fff); border-color: #fde68a; }
+    .card.tint-coral { background: linear-gradient(180deg, var(--coral-soft), #fff); border-color: #fecaca; }
+
+    .card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-bottom: 12px;
+    }
+    .card-title {
+      margin: 0; font-size: 15px; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .card-title .icon { width: 28px; height: 28px; border-radius: 9px; }
+    .card-action {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 28px; padding: 0 10px;
+      border: 1px solid var(--line); border-radius: 999px;
+      background: #fff; color: var(--sky-ink);
+      font-size: 12px; font-weight: 700;
+    }
+    .card-action:hover { border-color: var(--sky); }
+
+    /* Icon container */
+    .icon {
+      width: 32px; height: 32px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: var(--sky-soft); color: var(--sky-ink);
+      flex: 0 0 auto;
+    }
+    .icon.mint { background: var(--mint-soft); color: var(--mint-ink); }
+    .icon.amber { background: var(--amber-soft); color: var(--amber-ink); }
+    .icon.coral { background: var(--coral-soft); color: var(--coral-ink); }
+    .icon.violet { background: var(--violet-soft); color: var(--violet-ink); }
+    .icon svg { width: 16px; height: 16px; }
+    .icon.lg { width: 40px; height: 40px; border-radius: 12px; }
+    .icon.lg svg { width: 20px; height: 20px; }
+
+    /* Filter chips & segmented control */
+    .filter-row {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .chip {
+      height: 30px; padding: 0 12px;
+      border: 1px solid var(--line); border-radius: 999px;
+      background: #fff; color: var(--muted);
+      font-size: 12.5px; font-weight: 600;
+    }
+    .chip.active { border-color: var(--sky); background: var(--sky-soft); color: var(--sky-ink); }
+    .chip:hover { border-color: var(--line-strong); }
+
+    .seg {
+      display: inline-grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 1fr;
+      gap: 4px;
+      padding: 4px;
+      border-radius: 12px;
+      background: var(--bg);
+      width: 100%;
+    }
+    .seg > span {
+      height: 30px;
+      display: grid; place-items: center;
+      border-radius: 9px;
+      color: var(--muted);
+      font-size: 12.5px; font-weight: 700;
+      cursor: pointer;
+    }
+    .seg > span.active { background: #fff; color: var(--sky-ink); box-shadow: var(--shadow-sm); }
+
+    .field {
+      min-height: 38px;
+      display: inline-flex; align-items: center; justify-content: space-between;
+      gap: 6px; padding: 0 12px;
+      border: 1px solid var(--line); border-radius: 12px;
+      background: #fff; color: var(--ink);
+      font-size: 13px; font-weight: 500;
+    }
+    .field .placeholder { color: var(--soft); font-weight: 500; }
+    .field .leading { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .field.select::after {
+      content: ""; width: 7px; height: 7px;
+      border-right: 2px solid var(--soft); border-bottom: 2px solid var(--soft);
+      transform: rotate(45deg) translateY(-2px);
+      flex: 0 0 auto;
+    }
+    /* In-box label + value: label is pinned (flex:0 0 auto + border-right),
+       value gets ellipsis so long content never pushes or covers the label. */
+    .field.select { gap: 0; }
+    .field.select > .leading {
+      flex: 0 0 auto;
+      padding-right: 10px;
+      margin-right: 10px;
+      border-right: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11.5px; font-weight: 700;
+      letter-spacing: .02em;
+      line-height: 1;
+    }
+    .field.select > .value {
+      flex: 1 1 auto; min-width: 0;
+      text-align: left;
+      color: var(--ink);
+      font-size: 13px; font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .filter-grid {
+      display: grid; gap: 8px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .filter-grid .wide { grid-column: 1 / -1; }
+
+    /* Dropdown row — strict label / value partition.
+       Stacked = label on top (mobile-friendly).
+       Row     = label on left, value on right; value wraps inside its own column
+                 so the label never gets pushed or covered. */
+    .dd-row {
+      display: grid;
+      gap: 6px 12px;
+      align-items: start;
+    }
+    .dd-row.stacked { grid-template-columns: 1fr; }
+    .dd-row.row { grid-template-columns: 88px 1fr; }
+    .dd-row.row.wide-label { grid-template-columns: 96px 1fr; }
+    .dd-label {
+      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 600;
+      line-height: 28px;
+    }
+    .dd-value {
+      display: flex; flex-wrap: wrap;
+      gap: 6px;
+      min-width: 0;
+    }
+    .dd-value > * { flex: 0 1 auto; }
+    .dd-value .field { width: 100%; }
+    .dd-chip {
+      display: inline-flex; align-items: center;
+      height: 28px; padding: 0 10px;
+      border-radius: 999px;
+      background: var(--primary-soft); color: var(--primary-ink);
+      font-size: 12.5px; font-weight: 600;
+    }
+    .dd-stack {
+      display: grid; gap: 10px;
+    }
+
+    /* Search input — strictly left aligned (text + placeholder). */
+    .search {
+      display: flex; align-items: center; gap: 8px;
+      height: 40px; padding: 0 12px;
+      border: 1px solid var(--line); border-radius: 12px;
+      background: #fff;
+    }
+    .search > svg {
+      flex: 0 0 auto;
+      width: 16px; height: 16px;
+      color: var(--soft);
+    }
+    .search input,
+    .search .search-placeholder {
+      flex: 1; min-width: 0;
+      border: 0; outline: 0;
+      background: transparent;
+      text-align: left;
+      font-size: 13px; color: var(--ink);
+    }
+    .search input::placeholder { color: var(--soft); text-align: left; }
+    .search .search-placeholder { color: var(--soft); line-height: 38px; }
+    .pad .search { height: 36px; }
+    .pad .search .search-placeholder { line-height: 34px; }
+
+    /* Buttons */
+    .btn {
+      min-height: 40px;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px;
+      padding: 0 16px;
+      border-radius: 12px;
+      font-size: 13.5px; font-weight: 700;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: all .15s ease;
+    }
+    .btn.primary {
+      background: var(--sky); color: #fff;
+      box-shadow: 0 8px 18px rgba(0,84,255,.22);
+    }
+    .btn.primary:hover { background: var(--sky-2); }
+    .btn.ghost {
+      background: #fff; color: var(--sky-ink);
+      border-color: var(--line);
+    }
+    .btn.ghost:hover { border-color: var(--sky); }
+    .btn.link {
+      min-height: 28px; padding: 0;
+      background: transparent; color: var(--sky-ink);
+      font-weight: 700;
+    }
+    .btn.block { width: 100%; }
+    .btn.sm { min-height: 32px; padding: 0 12px; font-size: 12.5px; }
+
+    /* Tags */
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 22px; padding: 0 8px;
+      border-radius: 999px;
+      background: var(--mint-soft); color: var(--mint-ink);
+      font-size: 11.5px; font-weight: 700;
+    }
+    .tag.blue { background: var(--sky-soft); color: var(--sky-ink); }
+    .tag.amber { background: var(--amber-soft); color: var(--amber-ink); }
+    .tag.coral { background: var(--coral-soft); color: var(--coral-ink); }
+    .tag.violet { background: var(--violet-soft); color: var(--violet-ink); }
+    .tag.gray { background: var(--bg); color: var(--muted); }
+    .tag-dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* Key-value */
+    .kv {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 8px 12px;
+      font-size: 13px;
+    }
+    .kv > span { color: var(--muted); }
+    .kv > b { color: var(--ink); font-weight: 600; word-break: break-all; }
+
+    /* Stat grid */
+    .stat-grid {
+      display: grid; gap: 10px;
+      grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+    }
+    .stat {
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--bg);
+    }
+    .stat label { display: block; color: var(--muted); font-size: 12px; }
+    .stat strong { display: block; margin-top: 4px; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+    .stat small { display: block; margin-top: 2px; color: var(--soft); font-size: 11.5px; }
+    .stat.bordered { background: #fff; border: 1px solid var(--line); }
+    .stat.accent-sky { background: var(--sky-soft); }
+    .stat.accent-sky strong { color: var(--sky-ink); }
+    .stat.accent-mint { background: var(--mint-soft); }
+    .stat.accent-mint strong { color: var(--mint-ink); }
+    .stat.accent-amber { background: var(--amber-soft); }
+    .stat.accent-amber strong { color: var(--amber-ink); }
+    .stat.accent-coral { background: var(--coral-soft); }
+    .stat.accent-coral strong { color: var(--coral-ink); }
+
+    /* Action cards on overview */
+    .quick {
+      display: grid; gap: 10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .quick-card {
+      padding: 14px;
+      border-radius: var(--r-lg);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    }
+    .quick-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); border-color: var(--line-strong); }
+    .quick-card header { display: flex; align-items: center; gap: 8px; }
+    .quick-card .title { font-size: 14px; font-weight: 700; }
+    .quick-card .lead {
+      margin-top: 10px; font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    }
+    .quick-card .lead.muted { color: var(--muted); font-size: 15px; font-weight: 600; }
+    .quick-card .sub-stat { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .quick-card footer {
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px dashed var(--line);
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--sky-ink); font-size: 12px; font-weight: 700;
+    }
+
+    /* Record list */
+    .list-rows > .row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .list-rows > .row:last-child { border-bottom: 0; }
+    .list-rows > .row .title { font-size: 14px; font-weight: 700; }
+    .list-rows > .row .meta { margin-top: 4px; color: var(--muted); font-size: 11.5px; line-height: 1.55; }
+    .list-rows > .row .meta .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+    .list-rows > .row.selected { background: linear-gradient(90deg, var(--sky-soft), transparent); margin: 0 -14px; padding: 12px 14px; border-radius: 12px; border-bottom-color: transparent; }
+    .list-rows > .row .amount { text-align: right; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
+    .list-rows > .row .amount small { display: block; color: var(--muted); font-size: 11.5px; font-weight: 600; margin-top: 3px; }
+    .list-rows > .row .amount.red { color: var(--coral); }
+    .list-rows > .row .amount.green { color: var(--mint-ink); }
+    .list-rows > .row .amount.gray { color: var(--muted); }
+
+    .row-direction {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 18px; padding: 0 6px;
+      border-radius: 4px;
+      background: var(--mint-soft); color: var(--mint-ink);
+      font-size: 10.5px; font-weight: 700;
+      margin-right: 6px;
+      vertical-align: 1px;
+    }
+    .row-direction.red { background: var(--coral-soft); color: var(--coral-ink); }
+
+    /* Summary band */
+    .summary-band {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 14px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(120deg, var(--ink) 0%, #1e293b 100%);
+      color: #fff;
+    }
+    .summary-band > div { position: relative; }
+    .summary-band > div + div::before {
+      content: ""; position: absolute; left: -6px; top: 4px; bottom: 4px;
+      border-left: 1px solid rgba(255,255,255,.14);
+    }
+    .summary-band .label { color: rgba(255,255,255,.65); font-size: 11.5px; }
+    .summary-band .value { display: block; margin-top: 5px; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+    .summary-band .delta { display: block; margin-top: 2px; color: rgba(255,255,255,.55); font-size: 11px; }
+
+    /* Stacked variant: each KPI on its own row, label+delta on the left,
+       big value on the right — easier to scan than 3-column grid. */
+    .summary-band.stack {
+      display: flex; flex-direction: column;
+      gap: 0;
+      padding: 4px 14px;
+    }
+    .summary-band.stack > div {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+    }
+    .summary-band.stack > div + div {
+      border-top: 1px solid rgba(255,255,255,.14);
+    }
+    .summary-band.stack > div + div::before { display: none; }
+    .summary-band.stack .sb-text { display: flex; flex-direction: column; gap: 2px; }
+    .summary-band.stack .sb-text .label {
+      color: rgba(255,255,255,.85);
+      font-size: 13.5px; font-weight: 700;
+    }
+    .summary-band.stack .sb-text .delta {
+      color: rgba(255,255,255,.55);
+      font-size: 11.5px; margin: 0;
+    }
+    .summary-band.stack .value {
+      margin: 0;
+      font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    }
+
+    /* Period summary: dark hero card that anchors the page —
+       big net amount on top, income/refund breakdown below. */
+    .period-summary {
+      padding: 18px 18px 16px;
+      border-radius: var(--r-lg);
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0c1424 100%);
+      color: #fff;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .period-summary::after {
+      content: "";
+      position: absolute; right: -60px; top: -50px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(0,84,255,.30), transparent);
+      pointer-events: none;
+    }
+    .period-summary > * { position: relative; }
+    .period-summary .ps-eyebrow {
+      display: inline-block;
+      color: rgba(255,255,255,.62); font-size: 11px;
+      letter-spacing: .08em; text-transform: uppercase;
+      font-weight: 700;
+    }
+    .period-summary .ps-net {
+      display: block;
+      margin: 10px 0 2px;
+      font-size: 34px; font-weight: 700;
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .period-summary .ps-net .currency {
+      font-size: 17px; color: rgba(255,255,255,.55);
+      margin-right: 4px; font-weight: 700;
+      vertical-align: 6px;
+    }
+    .period-summary .ps-net-label {
+      display: block;
+      color: rgba(255,255,255,.55); font-size: 12px;
+      margin-bottom: 14px;
+    }
+    .period-summary .ps-breakdown {
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+    .period-summary .ps-cell {
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .period-summary .ps-cell + .ps-cell {
+      padding-left: 14px;
+      border-left: 1px solid rgba(255,255,255,.12);
+    }
+    .period-summary .ps-cell-label {
+      display: flex; align-items: center; gap: 6px;
+      color: rgba(255,255,255,.7); font-size: 11.5px;
+      font-weight: 600;
+    }
+    .period-summary .ps-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    .period-summary .ps-cell.income .ps-dot { background: #34d399; }
+    .period-summary .ps-cell.refund .ps-dot { background: #f87171; }
+    .period-summary .ps-cell.guotong .ps-dot { background: #fbbf4f; }
+    .period-summary .ps-cell.wechat  .ps-dot { background: #34d399; }
+    .period-summary .ps-cell-value {
+      font-size: 18px; font-weight: 700;
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .period-summary .ps-cell-sub {
+      color: rgba(255,255,255,.5); font-size: 11px;
+    }
+
+    /* pad 端横向 2 列布局:左侧汇总数字 + 右侧图表,缓解"头重脚轻" */
+    .period-summary.split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+      grid-template-rows: auto auto auto 1fr;
+      column-gap: 28px;
+      align-items: start;
+      padding: 22px 24px;
+    }
+    .period-summary.split .ps-eyebrow { grid-column: 1; grid-row: 1; }
+    .period-summary.split .ps-net { grid-column: 1; grid-row: 2; margin: 6px 0 2px; }
+    .period-summary.split .ps-net-label { grid-column: 1; grid-row: 3; margin-bottom: 0; }
+    .period-summary.split .ps-breakdown { grid-column: 1; grid-row: 4; margin-top: 16px; align-self: end; }
+    .period-summary.split .ps-trend {
+      grid-column: 2;
+      grid-row: 1 / -1;
+      margin-top: 0;
+      padding-top: 0;
+      padding-left: 28px;
+      border-top: 0;
+      border-left: 1px solid rgba(255,255,255,.12);
+      align-self: center;
+    }
+    /* 装饰圆斑挪到左侧,避免被右侧图表盖住 */
+    .period-summary.split::after {
+      right: auto; left: -50px; top: -40px;
+      background: radial-gradient(closest-side, rgba(0,84,255,.34), transparent);
+    }
+
+    /* In-hero trend: net amount per day, oldest -> newest. */
+    .period-summary .ps-trend {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.12);
+    }
+    .period-summary .ps-trend .sparkline {
+      height: 44px; gap: 5px;
+    }
+    .period-summary .ps-trend .sparkline i {
+      background: linear-gradient(180deg, #4f86ff, rgba(0,84,255,.25));
+      border-radius: 3px 3px 1px 1px;
+      min-height: 4px;
+    }
+    .period-summary .ps-trend .sparkline-axis {
+      display: flex; justify-content: space-between;
+      margin-top: 6px;
+      color: rgba(255,255,255,.5);
+      font-size: 10.5px; letter-spacing: .02em;
+    }
+    /* Granularity segmented control sitting inside the dark hero. */
+    .period-summary .seg {
+      background: rgba(255,255,255,.08);
+      padding: 3px;
+      border-radius: 10px;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+    .period-summary .seg > span {
+      height: 28px;
+      color: rgba(255,255,255,.62);
+      font-size: 12px; font-weight: 700;
+      border-radius: 7px;
+      cursor: pointer;
+    }
+    .period-summary .seg > span.active {
+      background: #fff;
+      color: var(--primary-ink);
+      box-shadow: 0 1px 2px rgba(0,0,0,.25);
+    }
+    /* Area chart — line + gradient fill, scales horizontally to fit. */
+    .area-chart {
+      display: block;
+      width: 100%;
+      height: 60px;
+    }
+
+    /* Field controls embedded inside the dark hero — translucent surfaces. */
+    .period-summary .field {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.18);
+      color: #fff;
+    }
+    .period-summary .field.select > .leading {
+      color: rgba(255,255,255,.6);
+      border-right-color: rgba(255,255,255,.18);
+    }
+    .period-summary .field.select > .value {
+      color: #fff;
+    }
+    .period-summary .field.select::after {
+      border-right-color: rgba(255,255,255,.55);
+      border-bottom-color: rgba(255,255,255,.55);
+    }
+    .period-summary .ps-trend-controls {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    /* Day list rendered as rows inside a single card (no card-in-card). */
+    .day-list-card { padding: 0; overflow: hidden; }
+    /* 搜索条嵌入 day-list-card / pad-table 顶部:与下方列表无缝拼接 */
+    .day-list-card .list-search-head { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    .card > .search + .pad-table { margin-top: 12px; }
+
+    /* 结算报表逐笔流水卡片行 */
+    .settle-record {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: 14px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .day-list-card .settle-record:last-child { border-bottom: 0; }
+    .settle-record.clickable { cursor: pointer; transition: background .15s ease; }
+    .settle-record.clickable:hover,
+    .settle-record.clickable:active { background: var(--page); }
+
+    .settle-record .sr-body { min-width: 0; }
+    .settle-record .sr-title {
+      font-size: 14.5px; font-weight: 700; color: var(--ink);
+      line-height: 1.4;
+      word-break: break-all;
+    }
+    .settle-record .sr-id {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11.5px;
+      color: var(--soft);
+      margin-top: 4px;
+      word-break: break-all;
+    }
+    .settle-record .sr-line {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.55;
+      word-break: break-all;
+    }
+
+    .settle-record .sr-side {
+      display: flex; flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex: 0 0 auto;
+      min-width: 76px;
+    }
+    .settle-record .sr-amount {
+      font-size: 17px; font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink);
+      letter-spacing: -.01em;
+    }
+    .settle-record .sr-fee {
+      font-size: 11.5px; color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 2px;
+    }
+    .settle-record .sr-tag {
+      height: 20px; padding: 0 8px;
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--ink-2);
+      font-size: 11px; font-weight: 600;
+      display: inline-flex; align-items: center;
+      white-space: nowrap;
+    }
+    .settle-record .sr-tag.green { background: var(--mint-soft); color: var(--mint-ink); }
+    .settle-record .sr-tag.wechat { background: var(--mint-soft); color: var(--mint-ink); }
+
+    /* pad 端略宽松 */
+    .pad .settle-record { padding: 16px 18px; }
+    .pad .settle-record .sr-title { font-size: 15px; }
+    .pad .settle-record .sr-amount { font-size: 18px; }
+    .day-row-item {
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .day-row-item:last-child { border-bottom: 0; }
+    .day-row-item.clickable { cursor: pointer; transition: background .15s ease; }
+    .day-row-item.clickable:active,
+    .day-row-item.clickable:hover { background: var(--page); }
+    .day-row-item .dri-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 8px;
+    }
+    .day-row-item .dri-date {
+      font-size: 14px; font-weight: 700; color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .day-row-item .dri-net {
+      font-size: 17px; font-weight: 700; color: var(--ink);
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .day-row-item .dri-meta {
+      display: flex; flex-wrap: wrap; gap: 14px;
+      color: var(--muted); font-size: 12px;
+      line-height: 1;
+    }
+    .day-row-item .dri-stat {
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .day-row-item .dri-stat::before {
+      content: ""; width: 6px; height: 6px; border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    .day-row-item .dri-stat.income::before  { background: var(--mint); }
+    .day-row-item .dri-stat.refund::before  { background: var(--coral); }
+    .day-row-item .dri-stat.muted::before   { background: var(--soft); }
+    .day-row-item .dri-stat.guotong::before { background: var(--amber); }
+    .day-row-item .dri-stat.wechat::before  { background: var(--mint); }
+    .day-row-item .dri-stat b {
+      color: var(--ink); font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+    .day-row-item .dri-stat.muted b { color: var(--muted); font-weight: 600; }
+    .day-row-item .dri-bar { height: 5px; }
+
+    /* List footer: pull-to-load hint or end-of-list terminator. */
+    .day-list-footer {
+      display: flex; justify-content: center; align-items: center;
+      gap: 8px;
+      padding: 16px 14px calc(14px + env(safe-area-inset-bottom));
+      border-top: 1px solid var(--line);
+      color: var(--soft); font-size: 12px;
+    }
+    .day-list-footer .pull-arrow {
+      display: inline-grid; place-items: center;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--bg);
+      color: var(--muted);
+      font-size: 11px; font-weight: 700;
+    }
+    .day-list-footer .pull-progress { color: var(--muted); }
+    .day-list-footer .pull-progress b { color: var(--ink); font-weight: 700; }
+
+    /* Per-day summary card: head = date + net amount; body = income / refund rows. */
+    .day-list { display: flex; flex-direction: column; gap: 12px; }
+    .day-card {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+    .day-card-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .day-card-head .day-date {
+      font-size: 14px; font-weight: 700; color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .day-card-head .day-net {
+      font-size: 18px; font-weight: 700; color: var(--ink);
+      letter-spacing: -0.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    .day-card-head .day-net-label {
+      color: var(--muted); font-size: 11.5px; font-weight: 600;
+      margin-right: 6px;
+    }
+    .day-card-body { display: flex; flex-direction: column; gap: 6px; }
+    .day-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 12.5px;
+    }
+    .day-row.income { background: var(--mint-soft); color: var(--mint-ink); }
+    .day-row.refund { background: var(--coral-soft); color: var(--coral-ink); }
+    .day-row.muted  { background: var(--bg); color: var(--muted); }
+    .day-row .day-tag { font-weight: 700; }
+    .day-row .day-amt {
+      font-weight: 700; font-variant-numeric: tabular-nums;
+    }
+    .day-card .bar { margin-top: 10px; }
+
+    /* KPI rows: label left + value right on a single line, vertically stacked. */
+    .kpi-rows { display: flex; flex-direction: column; gap: 8px; }
+    .kpi-rows > .kpi-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--bg);
+    }
+    .kpi-rows > .kpi-row > span { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .kpi-rows > .kpi-row > b { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+    .kpi-rows > .kpi-row.bordered { background: #fff; border: 1px solid var(--line); }
+    .kpi-rows > .kpi-row.accent-amber { background: var(--amber-soft); }
+    .kpi-rows > .kpi-row.accent-amber > b { color: var(--amber-ink); }
+    .kpi-rows > .kpi-row.accent-sky { background: var(--primary-soft); }
+    .kpi-rows > .kpi-row.accent-sky > b { color: var(--primary-ink); }
+    .kpi-rows > .kpi-row.accent-mint { background: var(--mint-soft); }
+    .kpi-rows > .kpi-row.accent-mint > b { color: var(--mint-ink); }
+
+    /* Empty state */
+    .empty {
+      padding: 32px 20px;
+      text-align: center;
+      border-radius: var(--r-lg);
+      background: #fff;
+      border: 1px dashed var(--line-strong);
+    }
+    .empty .empty-icon {
+      width: 56px; height: 56px;
+      margin: 0 auto 12px;
+      display: grid; place-items: center;
+      border-radius: 16px;
+      background: var(--bg); color: var(--muted);
+    }
+    .empty b { display: block; font-size: 15px; }
+    .empty p { margin: 6px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+    .empty .actions { display: flex; gap: 8px; justify-content: center; margin-top: 14px; }
+
+    /* Full-page empty state (整页空状态) */
+    .page-empty {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 32px 20px 8px;
+    }
+    .pad .page-empty { padding: 12px 0 0; }
+    .page-empty-illu {
+      width: 200px; height: 200px;
+      display: grid; place-items: center;
+      margin: 8px auto 18px;
+    }
+    .pad .page-empty-illu { width: 220px; height: 220px; margin: 0 auto 8px; }
+    .page-empty-illu svg { width: 100%; height: 100%; display: block; }
+    .page-empty h3 {
+      margin: 0;
+      font-size: 19px; font-weight: 700; letter-spacing: -.01em;
+      color: var(--ink);
+    }
+    .pad .page-empty h3 { font-size: 22px; }
+    .page-empty p {
+      margin: 8px 0 0;
+      max-width: 320px;
+      color: var(--muted);
+      font-size: 13.5px; line-height: 1.6;
+    }
+    .pad .page-empty p { max-width: 420px; font-size: 14px; }
+    .page-empty .actions {
+      display: flex; gap: 10px;
+      justify-content: center; flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .page-empty-foot {
+      margin-top: 10px;
+      color: var(--soft); font-size: 12px;
+    }
+    .page-empty-foot a { color: var(--primary-ink); font-weight: 600; }
+
+    /* iPad 左右分栏(插画 + 文案) */
+    .pad-empty-hero {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      align-items: center;
+      gap: 24px;
+      padding: 28px 28px 24px;
+      border-radius: var(--r-xl);
+      background: linear-gradient(135deg, #fff 0%, var(--primary-soft) 100%);
+      border: 1px solid var(--line);
+    }
+    .pad-empty-hero .page-empty-illu { margin: 0; width: 200px; height: 200px; }
+    .pad-empty-hero .copy { text-align: left; }
+    .pad-empty-hero .copy h3 { font-size: 24px; }
+    .pad-empty-hero .copy p { max-width: 100%; margin-top: 10px; }
+    .pad-empty-hero .actions { justify-content: flex-start; }
+
+    /* "你可以尝试" 步骤引导 */
+    .empty-section-title {
+      display: flex; align-items: center; gap: 10px;
+      margin: 24px 0 12px;
+      color: var(--muted);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: .08em;
+    }
+    .empty-section-title::before,
+    .empty-section-title::after {
+      content: ""; flex: 1; height: 1px; background: var(--line);
+    }
+    .empty-steps {
+      display: grid; gap: 10px;
+    }
+    .pad .empty-steps {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .empty-step {
+      display: grid;
+      grid-template-columns: 36px 1fr 16px;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-radius: var(--r-lg);
+      background: #fff;
+      border: 1px solid var(--line);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .pad .empty-step {
+      grid-template-columns: 40px 1fr;
+      grid-template-rows: auto auto;
+      gap: 4px 12px;
+      align-items: start;
+      padding: 16px;
+    }
+    .empty-step:hover {
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px -8px rgba(0,84,255,.25);
+    }
+    .empty-step .step-no {
+      width: 36px; height: 36px;
+      display: grid; place-items: center;
+      border-radius: 12px;
+      background: var(--primary-soft);
+      color: var(--primary-ink);
+      font-weight: 700; font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+    .pad .empty-step .step-no { width: 40px; height: 40px; grid-row: 1 / span 2; }
+    .empty-step .step-body b {
+      display: block;
+      font-size: 14px; color: var(--ink); font-weight: 700;
+    }
+    .empty-step .step-body small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted); font-size: 12px; line-height: 1.5;
+    }
+    .empty-step .step-arrow {
+      color: var(--soft);
+      display: grid; place-items: center;
+    }
+    .pad .empty-step .step-arrow { display: none; }
+    .empty-step .step-arrow svg { width: 14px; height: 14px; }
+
+    /* Banner */
+    .banner {
+      display: grid;
+      grid-template-columns: 36px 1fr auto;
+      gap: 12px; align-items: center;
+      padding: 12px 14px;
+      border-radius: var(--r-md);
+    }
+    .banner.success { background: var(--mint-soft); border: 1px solid #bbf7d0; }
+    .banner.danger { background: var(--coral-soft); border: 1px solid #fecaca; }
+    .banner.info { background: var(--sky-soft); border: 1px solid #cfdcff; }
+    .banner .b-icon { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px; }
+    .banner .b-text b { display: block; font-size: 14px; }
+    .banner .b-text small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    /* Detail amount summary */
+    .amount-summary {
+      padding: 18px;
+      border-radius: var(--r-lg);
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+    }
+    .amount-summary .label { display: block; color: var(--muted); font-size: 12px; }
+    .amount-summary .amount {
+      display: block; margin: 8px 0 4px;
+      font-size: 36px; font-weight: 700; letter-spacing: -0.02em;
+    }
+    .amount-summary .amount .currency { font-size: 18px; color: var(--muted); font-weight: 700; vertical-align: 8px; margin-right: 2px; }
+    .amount-summary .meta { color: var(--muted); font-size: 12.5px; }
+
+    /* Sortable list */
+    .sortable .sort-item {
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      gap: 10px; align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .sortable .sort-item:last-child { border-bottom: 0; }
+    .drag-handle {
+      width: 20px; height: 28px; color: var(--soft); cursor: grab;
+      display: grid; place-items: center;
+    }
+    .sortable b { display: block; font-size: 14px; font-weight: 700; }
+    .sortable small { display: block; margin-top: 3px; color: var(--muted); font-size: 11.5px; line-height: 1.5; }
+
+    /* Switch */
+    .switch {
+      width: 42px; height: 24px; border-radius: 999px;
+      background: var(--line-strong); position: relative; cursor: pointer; transition: background .15s;
+    }
+    .switch::after {
+      content: ""; position: absolute; top: 3px; left: 3px;
+      width: 18px; height: 18px; border-radius: 50%; background: #fff;
+      box-shadow: 0 1px 2px rgba(15,23,42,.18); transition: left .15s;
+    }
+    .switch.on { background: var(--mint); }
+    .switch.on::after { left: 21px; }
+
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      height: 26px; padding: 0 10px;
+      border-radius: 999px;
+      font-size: 12px; font-weight: 700;
+    }
+    .status-pill.default { background: var(--sky-soft); color: var(--sky-ink); }
+    .status-pill.enabled { background: var(--mint-soft); color: var(--mint-ink); }
+    .status-pill.disabled { background: var(--bg); color: var(--muted); }
+    .status-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    /* Sticky footer for save/confirm */
+    .sticky-footer {
+      position: sticky; bottom: 0;
+      margin: 0 -14px -14px;
+      padding: 12px 14px calc(12px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+    }
+    .sticky-footer .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+
+    /* Phone tab bar (visual only) */
+    .tabbar {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+    }
+    .tabbar button {
+      display: grid; place-items: center;
+      gap: 2px;
+      border: 0; background: transparent;
+      color: var(--muted); font-size: 10.5px; font-weight: 700;
+      padding: 4px 0;
+    }
+    .tabbar button.active { color: var(--sky-ink); }
+    .tabbar svg { width: 22px; height: 22px; }
+
+    /* iPad shell */
+    .pad-layout {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 660px;
+    }
+
+    .pad-nav {
+      height: 60px;
+      display: grid;
+      grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+      flex: 0 0 auto;
+    }
+    .pad-nav .nav-left { justify-self: start; display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; }
+    .pad-nav .nav-right { justify-self: end; display: inline-flex; align-items: center; gap: 8px; }
+    .pad-nav h2 {
+      margin: 0;
+      text-align: center;
+      font-size: 16px; font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pad-back {
+      display: inline-flex; align-items: center; gap: 4px;
+      height: 36px; padding: 0 12px 0 6px;
+      border: 0; border-radius: 10px;
+      background: transparent; color: var(--primary);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      max-width: 100%;
+    }
+    .pad-back:hover { background: var(--primary-soft); }
+    .pad-back svg { width: 18px; height: 18px; flex: 0 0 auto; }
+    .pad-back span {
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    .pad-subtabs {
+      display: flex;
+      gap: 2px;
+      padding: 0 20px;
+      background: rgba(255,255,255,.95);
+      border-bottom: 1px solid var(--line);
+      flex: 0 0 auto;
+      overflow-x: auto;
+    }
+    .pad-subtabs button {
+      height: 44px; padding: 0 16px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13.5px; font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+    .pad-subtabs button:hover { color: var(--ink); }
+    .pad-subtabs button.active { color: var(--primary-ink); }
+    .pad-subtabs button.active::after {
+      content: "";
+      position: absolute;
+      left: 12px; right: 12px; bottom: -1px;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .pad-main {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    .pad-main > * + * { margin-top: 14px; }
+    .pad-grid > div > * + * { margin-top: 14px; }
+    .pad-header {
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 14px;
+      margin-bottom: 14px;
+    }
+    .pad-header h2 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+    .pad-header p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .pad-header .actions { display: flex; gap: 8px; }
+
+    .pad-grid {
+      display: grid; gap: 14px;
+      grid-template-columns: 1.05fr .95fr;
+      align-items: start;
+    }
+    .pad-grid.equal { grid-template-columns: 1fr 1fr; }
+    .pad-grid.master-detail { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); }
+
+    .pad-kpis {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .pad-kpi {
+      padding: 14px;
+      border-radius: var(--r-lg);
+      background: #fff;
+      border: 1px solid var(--line);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .pad-kpi:hover { transform: translateY(-1px); border-color: var(--line-strong); box-shadow: var(--shadow-md); }
+    .pad-kpi header { display: flex; align-items: center; gap: 8px; }
+    .pad-kpi .title { font-size: 13px; color: var(--muted); }
+    .pad-kpi .value { margin-top: 8px; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+    .pad-kpi .footer { margin-top: 4px; color: var(--muted); font-size: 11.5px; }
+
+    /* Pad table */
+    .pad-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .pad-table th {
+      text-align: left;
+      padding: 10px 8px;
+      color: var(--muted); font-weight: 600; font-size: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .pad-table th:last-child, .pad-table td:last-child { text-align: right; }
+    .pad-table td {
+      padding: 12px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .pad-table tr:last-child td { border-bottom: 0; }
+    .pad-table tr.row { cursor: pointer; }
+    .pad-table tr.row:hover { background: var(--page); }
+    .pad-table tr.row.selected { background: var(--sky-soft); }
+    .pad-table .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--muted); }
+    .pad-table .amt { font-weight: 700; }
+    .pad-table .amt.red { color: var(--coral); }
+    .pad-table .amt.green { color: var(--mint-ink); }
+
+    /* Inline sparkline-like bar */
+    .bar {
+      position: relative; height: 8px; background: var(--bg); border-radius: 999px; overflow: hidden;
+    }
+    .bar > i {
+      position: absolute; left: 0; top: 0; bottom: 0;
+      background: linear-gradient(90deg, var(--sky), var(--violet));
+      border-radius: 999px;
+    }
+
+    /* Sparkline (CSS bar chart) */
+    .sparkline {
+      display: flex; align-items: flex-end; gap: 4px; height: 56px;
+    }
+    .sparkline i {
+      flex: 1;
+      background: linear-gradient(180deg, var(--sky), #93c5fd);
+      border-radius: 4px 4px 2px 2px;
+      min-height: 4px;
+    }
+    .sparkline.amber i { background: linear-gradient(180deg, var(--amber), #fcd34d); }
+    .sparkline.mint i { background: linear-gradient(180deg, var(--mint), #6ee7b7); }
+
+    @media (max-width: 1180px) {
+      .devices { grid-template-columns: 1fr; }
+      .phone-shell { max-width: 420px; }
+      .top { display: block; }
+      .route-tabs { justify-content: flex-start; margin-top: 12px; max-width: 100%; }
+    }
+
+    @media (max-width: 720px) {
+      .stage { width: calc(100vw - 16px); margin-top: 16px; }
+      .phone-shell, .pad-shell { padding: 8px; }
+      .pad-grid, .pad-grid.master-detail, .pad-grid.equal { grid-template-columns: 1fr; }
+      .pad-kpis { grid-template-columns: repeat(2, 1fr); }
+      .quick { grid-template-columns: 1fr; }
+      .summary-band { grid-template-columns: 1fr 1fr; }
+      .summary-band > div:nth-child(3) { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <header class="top">
+      <div>
+        <h1>收款功能 App 互动原型</h1>
+        <p class="sub">点击概览页功能卡或右上方导航切换页面。iPhone 沿用单列长图,iPad 改为左侧导航 + 右侧 master-detail 工作台。</p>
+      </div>
+      <nav class="route-tabs" id="tabs"></nav>
+    </header>
+
+    <section class="devices">
+      <div>
+        <div class="device-title">
+          <span>iPhone · 单列长图</span>
+          <span class="hint">含底部 tab 栏</span>
+        </div>
+        <div class="phone-shell">
+          <div class="screen" id="phone"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="device-title">
+          <span>iPad · 功能页</span>
+          <span class="hint">顶部导航 + 分段控件 + 主区</span>
+        </div>
+        <div class="pad-shell">
+          <div class="screen pad-screen pad" id="pad"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const routes = [
+      { key: "overview", label: "收款概览", group: "main", icon: "home" },
+      { key: "ledger", label: "交易记录", group: "trade", icon: "ledger" },
+      { key: "ledgerSummary", label: "交易汇总", group: "trade", icon: "chart" },
+      { key: "detail", label: "订单详情", group: "trade", icon: "doc" },
+      { key: "settlement", label: "结算报表", group: "settle", icon: "settle" },
+      { key: "settlementSummary", label: "结算汇总", group: "settle", icon: "calendar" },
+      { key: "settlementDetail", label: "结算详情", group: "settle", icon: "doc" },
+      { key: "accounts", label: "收款户管理", group: "config", icon: "card" },
+      { key: "notice", label: "通知订阅", group: "config", icon: "bell" },
+      { key: "empty", label: "无数据示例", group: "config", icon: "empty" }
+    ];
+
+    // 返回上一级路径(用于 pad 端导航栏返回按钮)
+    const parentOf = {
+      overview: null,
+      ledger: "overview",
+      ledgerSummary: "overview",
+      detail: "ledger",
+      settlement: "overview",
+      settlementSummary: "overview",
+      settlementDetail: "settlement",
+      accounts: "overview",
+      notice: "overview",
+      empty: "overview"
+    };
+
+    // pad 端二级分段控件:同一分组内可平级切换的页面
+    const padSubTabsMap = {
+      config: ["accounts", "notice", "empty"]
+    };
+
+    // pad 端导航栏右侧按钮:按路由配置,避免每页重复造 padHeader actions
+    const padNavActions = {
+      settlement: `<button class="btn ghost sm">导出</button>`
+    };
+
+    let current = "overview";
+    let selectedLedger = "PAY20260323133654666832260";
+    // 统一为 4 段日期口径(7天 / 30天 / 90天 / 自定义)
+    let selectedGranularity = "7天";
+    let selectedSettlementGranularity = "7天";
+    let settlementChip = "7天";
+    let ledgerChartChip = "7天";
+
+    // chip key(中文) → 现有趋势数据 key(英文)
+    const chipToTrend = { "7天": "7d", "30天": "30d", "90天": "90d", "自定义": "30d" };
+    // 4 段口径的"自定义"模式占位日期(实际由日期选择器决定)
+    const customRangeDefault = { from: "2026-05-10", to: "2026-05-16" };
+
+    /* Server-aggregated trend buckets keyed by granularity. Switching
+       granularity in production triggers a new request; the prototype
+       mocks the four possible payloads. */
+    const ledgerTrendByGranularity = {
+      "7d": {
+        label: "近 7 日净额",
+        buckets: [3500, 5200, 3960, 9980, 1980, 1980, 19800],
+        axis: { from: "2026-05-10", to: "2026-05-16" }
+      },
+      "30d": {
+        label: "近 30 日净额",
+        buckets: [
+          2980, 4470, 5940, 9980, 1980, 1980, 3960, 19800,
+          6320, 4180, 7720, 11200, 3540, 8800, 2400, 5180,
+          9260, 6500, 4800, 12300, 7100, 3380, 5640, 8920,
+          6200, 4500, 7800, 5360, 9180, 4820
+        ],
+        axis: { from: "2026-04-17", to: "2026-05-16" }
+      },
+      "90d": {
+        label: "近 90 日 · 按周",
+        buckets: [35000, 28000, 42000, 31000, 38000, 45000, 50000, 62000, 48000, 55000, 71000, 68000, 75000],
+        axis: { from: "2026-02-15", to: "2026-05-16" }
+      },
+      "1y": {
+        label: "近 12 月 · 按月",
+        buckets: [180000, 220000, 195000, 240000, 280000, 260000, 230000, 290000, 310000, 270000, 245000, 295000],
+        axis: { from: "2025-06", to: "2026-05" }
+      }
+    };
+
+    const ICONS = {
+      home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>`,
+      ledger: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>`,
+      chart: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>`,
+      doc: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>`,
+      settle: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/></svg>`,
+      calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>`,
+      card: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>`,
+      bell: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>`,
+      search: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="20" y1="20" x2="16.5" y2="16.5"/></svg>`,
+      back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>`,
+      down: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
+      right: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>`,
+      drag: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.4"/><circle cx="9" cy="12" r="1.4"/><circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="6" r="1.4"/><circle cx="15" cy="12" r="1.4"/><circle cx="15" cy="18" r="1.4"/></svg>`,
+      empty: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+      wifi: `<svg width="14" height="10" viewBox="0 0 14 10" fill="currentColor"><path d="M7 0a9 9 0 0 1 6.36 2.64.5.5 0 0 1 0 .7l-.7.71a.5.5 0 0 1-.7 0A7 7 0 0 0 7 2 7 7 0 0 0 2.04 4.05a.5.5 0 0 1-.7 0l-.7-.71a.5.5 0 0 1 0-.7A9 9 0 0 1 7 0Zm0 4a5 5 0 0 1 3.54 1.46.5.5 0 0 1 0 .7l-.71.71a.5.5 0 0 1-.7 0A3 3 0 0 0 7 6a3 3 0 0 0-2.12.88.5.5 0 0 1-.71 0l-.71-.71a.5.5 0 0 1 0-.71A5 5 0 0 1 7 4Zm0 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"/></svg>`,
+      battery: `<svg width="22" height="10" viewBox="0 0 22 10" fill="none" stroke="currentColor" stroke-width="1"><rect x="0.5" y="0.5" width="18" height="9" rx="2"/><rect x="2" y="2" width="13" height="6" rx="1" fill="currentColor"/><rect x="19.5" y="3" width="1.5" height="4" rx="0.5" fill="currentColor"/></svg>`
+    };
+
+    function icon(name) { return ICONS[name] || ""; }
+
+    function setRoute(key) {
+      current = key;
+      renderTabs();
+      renderPhone();
+      renderPad();
+    }
+
+    function selectLedger(id) {
+      selectedLedger = id;
+      renderPad();
+    }
+
+    function selectGranularity(key) {
+      selectedGranularity = key;
+      renderPhone(); renderPad();
+    }
+
+    function selectSettlementGranularity(key) {
+      selectedSettlementGranularity = key;
+      renderPhone(); renderPad();
+    }
+
+    function selectSettlementChip(key) {
+      settlementChip = key;
+      renderPhone(); renderPad();
+    }
+
+    function selectLedgerChartChip(key) {
+      ledgerChartChip = key;
+      renderPhone(); renderPad();
+    }
+
+    function pageTitle(key = current) {
+      return routes.find(item => item.key === key).label;
+    }
+
+    function statusBar() {
+      return `
+        <div class="status">
+          <span>9:41</span>
+          <span class="right">${icon("wifi")} ${icon("battery")}</span>
+        </div>`;
+    }
+
+    function phoneNav() {
+      const canBack = current !== "overview";
+      const rightAction = current === "settlement"
+        ? `<button class="nav-action">导出</button>`
+        : `<span></span>`;
+      return `
+        <div class="nav">
+          ${canBack ? `<button class="back" onclick="setRoute('overview')" aria-label="返回">${icon("back")}</button>` : `<span></span>`}
+          <h2>${pageTitle()}</h2>
+          ${rightAction}
+        </div>`;
+    }
+
+    function tabbar() {
+      const items = [
+        { key: "overview", label: "概览", icon: "home" },
+        { key: "ledger", label: "交易", icon: "ledger" },
+        { key: "settlement", label: "结算", icon: "settle" },
+        { key: "accounts", label: "设置", icon: "card" }
+      ];
+      const activeKey = ({
+        overview: "overview",
+        ledger: "ledger",
+        ledgerSummary: "ledger",
+        detail: "ledger",
+        settlement: "settlement",
+        settlementSummary: "settlement",
+        settlementDetail: "settlement",
+        accounts: "accounts",
+        notice: "accounts"
+      })[current];
+      return `
+        <div class="tabbar">
+          ${items.map(it => `
+            <button class="${it.key === activeKey ? "active" : ""}" onclick="setRoute('${it.key}')">
+              ${icon(it.icon)}
+              <span>${it.label}</span>
+            </button>
+          `).join("")}
+        </div>`;
+    }
+
+    // 结算报表逐笔流水行(手机/pad 共用):点击进入结算详情
+    function settleRecordRow(r) {
+      return `
+        <div class="settle-record clickable" onclick="setRoute('settlementDetail')">
+          <div class="sr-body">
+            <div class="sr-title">${r.title}</div>
+            <div class="sr-id">${r.id}</div>
+            <div class="sr-line">${r.customer}–${r.action}</div>
+            <div class="sr-line">预计到账：${r.expectedDate}</div>
+            <div class="sr-line">${r.merchant} ${r.cardLast}</div>
+          </div>
+          <div class="sr-side">
+            <div class="sr-amount">${fmt(r.amount)}</div>
+            <div class="sr-fee">手续费：${fmt(r.fee)}</div>
+            <div class="sr-tag">${r.type}</div>
+            <div class="sr-tag ${r.channel === "微信" ? "wechat" : "green"}">${r.channel}</div>
+          </div>
+        </div>`;
+    }
+
+    function hero({ title, sub, eyebrow = "概览", mode = "" }) {
+      return `
+        <section class="hero ${mode}">
+          <span class="hero-eyebrow">${eyebrow}</span>
+          <h3>${title}</h3>
+          <p>${sub}</p>
+        </section>`;
+    }
+
+    // 图表面板:芯片选择(今日/近7天/本月/自定义) + 自定义时显日期范围 + 面积图 + 轴标签
+    // 由 phoneSettlement 的图表模块抽出来,在 ledger / ledgerSummary / settlementSummary 之间复用
+    function chartPanel({ chip, trendMap, gradientId, lineColor, areaColor, customRange, axisCenter, onChipSelect }) {
+      const chipOptions = [
+        ["7天", "7 天"],
+        ["30天", "30 天"],
+        ["90天", "90 天"],
+        ["自定义", "自定义"]
+      ];
+      const trendKey = chipToTrend[chip] || "7d";
+      const trend = trendMap[trendKey];
+      const trendMax = Math.max(...trend.buckets, 1);
+      const VW = 300, VH = 60, padTop = 6;
+      const n = trend.buckets.length;
+      const pts = trend.buckets.map((v, i) => {
+        const x = n === 1 ? VW / 2 : (i / (n - 1)) * VW;
+        const y = VH - (v / trendMax) * (VH - padTop);
+        return [x.toFixed(1), y.toFixed(1)];
+      });
+      const linePath = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${p[1]}`).join(" ");
+      const areaPath = `${linePath} L ${VW} ${VH} L 0 ${VH} Z`;
+      const isCustom = chip === "自定义";
+      const range = isCustom ? (customRange || customRangeDefault) : trend.axis;
+      return `
+        <div class="seg">
+          ${chipOptions.map(([key, label]) => `
+            <span class="${chip === key ? 'active' : ''}" onclick="${onChipSelect}('${key}')">${label}</span>
+          `).join("")}
+        </div>
+        ${isCustom ? `
+          <div class="ps-trend-controls">
+            <div class="field select">
+              <span class="leading">开始</span>
+              <span class="value">${range.from}</span>
+            </div>
+            <div class="field select">
+              <span class="leading">结束</span>
+              <span class="value">${range.to}</span>
+            </div>
+          </div>
+        ` : ''}
+        <svg class="area-chart" viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${areaColor}" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="${areaColor}" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="${areaPath}" fill="url(#${gradientId})"/>
+          <path d="${linePath}" stroke="${lineColor}" stroke-width="1.8" fill="none" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="sparkline-axis">
+          <span>${range.from}</span>
+          <span>${axisCenter || trend.label}</span>
+          <span>${range.to}</span>
+        </div>`;
+    }
+
+    // 整页空状态:品牌插画(渐变背景圆 + 收款单 + ¥ 符号 + 装饰点)
+    function emptyIllustration() {
+      return `
+        <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="empty-bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#e6efff"/>
+              <stop offset="1" stop-color="#f5f3ff"/>
+            </linearGradient>
+            <linearGradient id="empty-card-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#0054ff"/>
+              <stop offset="1" stop-color="#003fcc"/>
+            </linearGradient>
+            <filter id="empty-shadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#0054ff" flood-opacity=".18"/>
+            </filter>
+          </defs>
+          <circle cx="120" cy="120" r="104" fill="url(#empty-bg)"/>
+          <circle cx="48" cy="62" r="3" fill="#0054ff" opacity=".35"/>
+          <circle cx="196" cy="74" r="4" fill="#8b5cf6" opacity=".5"/>
+          <circle cx="202" cy="168" r="3" fill="#10b981" opacity=".55"/>
+          <circle cx="40" cy="172" r="2.5" fill="#f59e0b" opacity=".55"/>
+          <path d="M 32 50 l 6 0 M 35 47 l 0 6" stroke="#0054ff" stroke-width="1.8" stroke-linecap="round" opacity=".4"/>
+          <path d="M 200 200 l 6 0 M 203 197 l 0 6" stroke="#8b5cf6" stroke-width="1.8" stroke-linecap="round" opacity=".4"/>
+          <g transform="translate(60 50) rotate(-5 60 80)" filter="url(#empty-shadow)">
+            <path d="M 8 0 L 112 0 Q 120 0 120 8 L 120 140 L 110 134 L 100 140 L 90 134 L 80 140 L 70 134 L 60 140 L 50 134 L 40 140 L 30 134 L 20 140 L 10 134 L 0 140 L 0 8 Q 0 0 8 0 Z" fill="#fff"/>
+            <path d="M 8 0 L 112 0 Q 120 0 120 8 L 120 32 L 0 32 L 0 8 Q 0 0 8 0 Z" fill="url(#empty-card-grad)"/>
+            <circle cx="60" cy="16" r="9" fill="#fff" opacity=".22"/>
+            <text x="60" y="21" font-size="14" font-weight="700" text-anchor="middle" fill="#fff" font-family="-apple-system,BlinkMacSystemFont,sans-serif">¥</text>
+            <rect x="14" y="52" width="92" height="8" rx="4" fill="#e6efff"/>
+            <rect x="14" y="68" width="60" height="6" rx="3" fill="#f1f5f9"/>
+            <rect x="14" y="88" width="92" height="6" rx="3" fill="#f1f5f9"/>
+            <rect x="14" y="100" width="76" height="6" rx="3" fill="#f1f5f9"/>
+            <rect x="14" y="112" width="92" height="6" rx="3" fill="#f1f5f9"/>
+          </g>
+          <g transform="translate(174 142)" filter="url(#empty-shadow)">
+            <circle r="22" fill="#fff"/>
+            <circle r="22" fill="url(#empty-card-grad)" opacity=".10"/>
+            <circle r="22" fill="none" stroke="#0054ff" stroke-width="1.5" opacity=".7"/>
+            <text y="7" font-size="22" font-weight="700" text-anchor="middle" fill="#0054ff" font-family="-apple-system,BlinkMacSystemFont,sans-serif">¥</text>
+          </g>
+        </svg>`;
+    }
+
+    // 三步引导卡片:首次/无数据场景下提示用户可以做什么
+    function emptySteps() {
+      const steps = [
+        { no: "01", title: "调整筛选条件", desc: "扩大日期范围或清除关键词,看看更早的记录。", target: "ledger" },
+        { no: "02", title: "查看演示账单", desc: "切换到演示数据,熟悉对账与结算流程。", target: "ledgerSummary" },
+        { no: "03", title: "发起一笔收款", desc: "创建收款链接并分享给客户,完成首笔交易。", target: "accounts" }
+      ];
+      return `
+        <div class="empty-steps">
+          ${steps.map(s => `
+            <button class="empty-step" onclick="setRoute('${s.target}')">
+              <div class="step-no">${s.no}</div>
+              <div class="step-body">
+                <b>${s.title}</b>
+                <small>${s.desc}</small>
+              </div>
+              <span class="step-arrow">${icon("right")}</span>
+            </button>
+          `).join("")}
+        </div>`;
+    }
+
+    /* ====================== Mock data ====================== */
+    const todayLedger = [
+      { id: "RF20260323133710403094702", title: "测试订单-预约金", direction: "refund", amount: -2, time: "2026-03-23 13:37:11", fee: 0, origin: "PAY20260323133654666832260" },
+      { id: "PAY20260323133654666832260", title: "测试订单-预约金", direction: "income", amount: 2, time: "2026-03-23 13:37:01", fee: 0 }
+    ];
+
+    const ledgerSummaryRows = [
+      ["2026-05-16", 19800, 1, 0, 0],
+      ["2026-05-15", 3960, 2, 1980, 1],
+      ["2026-05-14", 1980, 1, 0, 0],
+      ["2026-05-13", 9980, 2, 0, 0],
+      ["2026-05-12", 5940, 3, 1980, 1],
+      ["2026-05-08", 4470, 2, 0, 0],
+      ["2026-05-07", 2980, 1, 980, 1],
+      ["2026-05-06", 10666, 3, 0, 0]
+    ];
+
+    /* Pretends to be the response of a single server-side summary endpoint, e.g.
+       GET /api/ledger/summary?from=2026-04-17&to=2026-05-16
+       Hero reads `summary` (never reduces over loaded items, so totals stay
+       correct as the user pages through detail rows). `items` is just one page. */
+    const ledgerSummaryPage = {
+      summary: {
+        range: { from: "2026-04-17", to: "2026-05-16" },
+        totalDays: 30,
+        incomeAmount: 168420,
+        incomeCount: 58,
+        refundAmount: 12840,
+        refundCount: 9,
+        netAmount: 155580,
+        trendLabel: "近 30 日净额趋势",
+        // Server downsamples to ≤30 buckets — daily for <=30d, weekly/monthly beyond.
+        trendBuckets: [
+          2980, 4470, 5940, 9980, 1980, 1980, 3960, 19800,
+          6320, 4180, 7720, 11200, 3540, 8800, 2400, 5180,
+          9260, 6500, 4800, 12300, 7100, 3380, 5640, 8920,
+          6200, 4500, 7800, 5360, 9180, 4820
+        ]
+      },
+      items: ledgerSummaryRows,
+      pagination: { page: 1, pageSize: 8, total: 30, loaded: 8, hasMore: true }
+    };
+
+    const settlementSummaryRows = [
+      ["2026-05-18", 0, 0, 0],
+      ["2026-05-17", 17623.63, 16500.00, 1123.63],
+      ["2026-05-16", 3524.72, 3524.72, 0],
+      ["2026-05-15", 1762.36, 1762.36, 0],
+      ["2026-05-14", 8883.02, 7800.00, 1083.02],
+      ["2026-05-13", 5287.08, 5287.08, 0],
+      ["2026-05-12", 0, 0, 0],
+      ["2026-05-11", 0, 0, 0],
+      ["2026-05-10", 0, 0, 0],
+      ["2026-05-09", 3978.68, 3500.00, 478.68],
+      ["2026-05-08", 2652.45, 2652.45, 0],
+      ["2026-05-07", 9493.62, 8500.00, 993.62]
+    ];
+
+    // 结算报表逐笔流水(参照生产截图字段:订单号 / 课程 / 客户-动作 / 预计到账 / 结算卡 / 金额 / 手续费 / 收单 / 渠道)
+    const settlementRecords = [
+      { id: "PAY20260514140538355593916", title: "国省考笔试/笔试系列/精品活动课", customer: "范慧楠", action: "购买售卖班型", expectedDate: "2026-05-15", merchant: "通河县新途径教育咨询有限公司", cardLast: "2305****0294", amount: 697.50, fee: 1.50, type: "收单", channel: "国通" },
+      { id: "PAY20260514135407423376816", title: "国省考笔试/笔试系列/精品活动课", customer: "范禹希", action: "购买售卖班型", expectedDate: "2026-05-15", merchant: "通河县新途径教育咨询有限公司", cardLast: "2305****0294", amount: 697.50, fee: 1.50, type: "收单", channel: "国通" },
+      { id: "PAY20260514140519904221436", title: "国省考笔试/笔试系列/精品活动课", customer: "苗安琪", action: "购买售卖班型", expectedDate: "2026-05-15", merchant: "通河县新途径教育咨询有限公司", cardLast: "2305****0294", amount: 697.50, fee: 1.50, type: "收单", channel: "国通" },
+      { id: "PAY20260505104442151410466", title: "2026辅警/辅警笔试/辅警笔试班", customer: "郭浩然", action: "购买售卖班型", expectedDate: "2026-05-06", merchant: "庞兴芹", cardLast: "6235****6157", amount: 3372.73, fee: 7.27, type: "收单", channel: "国通" },
+      { id: "PAY20260504160212834511902", title: "2026国考面试/面试系列/面试精品班", customer: "李一帆", action: "购买售卖班型", expectedDate: "2026-05-06", merchant: "通河县新途径教育咨询有限公司", cardLast: "2305****0294", amount: 1280.00, fee: 2.56, type: "收单", channel: "国通" },
+      { id: "PAY20260503093745192388310", title: "教师资格证/笔试系列/全程精品班", customer: "刘心妍", action: "购买售卖班型", expectedDate: "2026-05-05", merchant: "庞兴芹", cardLast: "6235****6157", amount: 980.00, fee: 1.96, type: "收单", channel: "微信" }
+    ];
+
+    /* Same shape as ledgerSummaryPage — server-aggregated totals + a
+       paginated slice of daily detail. Hero never reduces over items. */
+    const settlementSummaryPage = {
+      summary: {
+        range: { from: "2026-04-17", to: "2026-05-16" },
+        totalDays: 30,
+        settledDays: 22,
+        netAmount: 198450.65,
+        guotongAmount: 175200.50,
+        wechatAmount: 23250.15
+      },
+      items: settlementSummaryRows,
+      pagination: { page: 1, pageSize: 12, total: 30, loaded: 12, hasMore: true }
+    };
+
+    const settlementDetailMock = {
+      amount: 19757.43,
+      fee: 42.57,
+      originalAmount: 19800.00,
+      originalFee: 42.57,
+      time: "2026-05-16 12:51:27",
+      status: "已结算",
+      base: {
+        tenant: "黑龙江哈尔滨五常",
+        merchantId: "60000013889133",
+        accountAlias: "非法人对私",
+        counterTenant: "—",
+        counterMerchantId: "—",
+        counterAccountAlias: "—",
+        platform: "国通",
+        channel: "微信",
+        business: "收单",
+        appName: "新途径报名"
+      },
+      order: {
+        changeId: "PAY20260516125127247362664",
+        systemOrderId: "PAY20260516125127247362664",
+        name: "收单",
+        orderName: "26春季人才周笔试班 / 26春季人才周基础班 / 26人才周基础课",
+        orderDesc: "任雨新-购买售卖班型"
+      },
+      card: {
+        holderName: "孙鸿博",
+        cardNumber: "6217 **** **** 6622",
+        bank: "中国建设银行"
+      }
+    };
+
+    const settlementTrendByGranularity = {
+      "7d": {
+        label: "近 7 日到账",
+        buckets: [9493.62, 2652.45, 3978.68, 0, 0, 0, 5287.08],
+        axis: { from: "2026-05-10", to: "2026-05-16" }
+      },
+      "30d": {
+        label: "近 30 日到账",
+        buckets: [
+          9493.62, 2652.45, 3978.68, 0, 0, 0, 5287.08, 8883.02,
+          1762.36, 3524.72, 17623.63, 0, 4200, 6300, 2100, 5500,
+          8800, 11200, 0, 3400, 7600, 9100, 5800, 2300,
+          6900, 12400, 8200, 4500, 7700, 6100
+        ],
+        axis: { from: "2026-04-17", to: "2026-05-16" }
+      },
+      "90d": {
+        label: "近 90 日 · 按周",
+        buckets: [42000, 38000, 51000, 47000, 36000, 58000, 49000, 62000, 55000, 71000, 68000, 75000, 81000],
+        axis: { from: "2026-02-15", to: "2026-05-16" }
+      },
+      "1y": {
+        label: "近 12 月 · 按月",
+        buckets: [165000, 198000, 215000, 230000, 252000, 245000, 268000, 280000, 295000, 310000, 285000, 325000],
+        axis: { from: "2025-06", to: "2026-05" }
+      }
+    };
+
+    function fmt(n) {
+      return n.toLocaleString("zh-CN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function signedFmt(n) {
+      const s = fmt(Math.abs(n));
+      return n < 0 ? `-${s}` : s;
+    }
+
+    /* ====================== Phone pages ====================== */
+    function phoneOverview() {
+      return `
+        ${hero({
+          title: "校区在线收款概览",
+          sub: "汇总展示交易、结算、默认账户与通知。",
+          eyebrow: "概览"
+        })}
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">查询范围</h4>
+          </div>
+          <div class="filter-grid">
+            <div class="field select wide">
+              <span class="leading">角色</span>
+              <span class="value">超级管理员</span>
+            </div>
+            <div class="field select">
+              <span class="leading">应用</span>
+              <span class="value">新途径报名</span>
+            </div>
+            <div class="field select">
+              <span class="leading">租户</span>
+              <span class="value">天津宝坻新途径</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px;">
+            <div class="search">
+              ${icon("search")}
+              <span class="search-placeholder">搜索订单号 / 标题 / 描述</span>
+            </div>
+            <button class="btn primary" onclick="setRoute('ledger')">查订单</button>
+          </div>
+        </section>
+
+        <section class="quick">
+          <article class="quick-card" onclick="setRoute('ledger')">
+            <header>
+              <i class="icon">${icon("ledger")}</i>
+              <span class="title">交易记录</span>
+            </header>
+            <div class="lead">¥ 19,800.00</div>
+            <div class="sub-stat">收款 1 笔</div>
+            <div class="sub-stat">退预约 0 笔</div>
+            <footer style="justify-content:center">
+              <button class="btn link sm" onclick="event.stopPropagation();setRoute('ledgerSummary')">查看更多 ${icon("right")}</button>
+            </footer>
+          </article>
+          <article class="quick-card" onclick="setRoute('settlement')">
+            <header>
+              <i class="icon amber">${icon("settle")}</i>
+              <span class="title">结算报表</span>
+            </header>
+            <div class="lead">¥ 17,623.63</div>
+            <div class="sub-stat">国通 17,623.63</div>
+            <div class="sub-stat">微信 0.00</div>
+            <footer style="justify-content:center">
+              <button class="btn link sm" onclick="event.stopPropagation();setRoute('settlementSummary')">查看更多 ${icon("right")}</button>
+            </footer>
+          </article>
+        </section>
+
+        <section class="card" style="cursor:pointer" onclick="setRoute('accounts')">
+          <div class="card-header">
+            <h4 class="card-title">
+              <i class="icon violet">${icon("card")}</i>
+              默认收款账户
+            </h4>
+            <span class="tag violet">点击管理</span>
+          </div>
+          <div class="kv">
+            <span>账户别名</span><b>法人对私</b>
+            <span>平台渠道</span><b>国通 - 微信</b>
+            <span>结算卡号</span><b>0209 **** **** 7637</b>
+            <span>开户主体</span><b>天津宝坻城南新途径信息科技有限公司</b>
+          </div>
+        </section>
+
+        <section class="card" style="cursor:pointer" onclick="setRoute('notice')">
+          <div class="card-header">
+            <h4 class="card-title">
+              <i class="icon coral">${icon("bell")}</i>
+              通知订阅
+            </h4>
+            <span class="tag gray">未启用</span>
+          </div>
+          <p class="sub" style="margin:0">订阅收款、退款、分账异常等事件的推送提醒。</p>
+        </section>
+      `;
+    }
+
+    function phoneLedger() {
+      const incomeTotal = todayLedger.filter(r => r.direction === "income").reduce((a, b) => a + b.amount, 0);
+      const refundTotal = todayLedger.filter(r => r.direction === "refund").reduce((a, b) => a + Math.abs(b.amount), 0);
+      const incomeCount = todayLedger.filter(r => r.direction === "income").length;
+      const refundCount = todayLedger.filter(r => r.direction === "refund").length;
+      const netAmount = incomeTotal - refundTotal;
+      return `
+        <section class="period-summary">
+          <span class="ps-eyebrow">今日交易 · ${todayLedger.length} 笔</span>
+          <span class="ps-net"><span class="currency">¥</span>${fmt(netAmount)}</span>
+          <span class="ps-net-label">净额（收款 − 退款）</span>
+          <div class="ps-breakdown">
+            <div class="ps-cell income">
+              <span class="ps-cell-label"><span class="ps-dot"></span>收款</span>
+              <span class="ps-cell-value">${fmt(incomeTotal)}</span>
+              <span class="ps-cell-sub">${incomeCount} 笔</span>
+            </div>
+            <div class="ps-cell refund">
+              <span class="ps-cell-label"><span class="ps-dot"></span>退款</span>
+              <span class="ps-cell-value">${fmt(refundTotal)}</span>
+              <span class="ps-cell-sub">${refundCount} 笔</span>
+            </div>
+          </div>
+          <div class="ps-trend">
+            ${chartPanel({
+              chip: ledgerChartChip,
+              trendMap: ledgerTrendByGranularity,
+              gradientId: "phone-ledger-area-gradient",
+              lineColor: "#7da6ff",
+              areaColor: "#4f86ff",
+              axisCenter: "每日交易趋势",
+              onChipSelect: "selectLedgerChartChip"
+            })}
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="search">
+            ${icon("search")}
+            <span class="search-placeholder">订单号 / 标题 / 描述</span>
+          </div>
+          <div class="seg" style="margin-top:10px">
+            <span class="active">全部</span>
+            <span>收款</span>
+            <span>退款</span>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">订单列表</h4>
+            <span class="tag gray">共 ${todayLedger.length} 笔</span>
+          </div>
+          <div class="list-rows">
+            ${todayLedger.map(r => `
+              <div class="row" onclick="setRoute('detail')">
+                <div>
+                  <div class="title">
+                    <span class="row-direction ${r.direction === "refund" ? "red" : ""}">${r.direction === "refund" ? "退款" : "收款"}</span>
+                    ${r.title}
+                  </div>
+                  <div class="meta">
+                    <div class="mono">${r.id}</div>
+                    <div>${r.time} · 手续费 ${fmt(r.fee)}</div>
+                    ${r.origin ? `<div>原订单 <span class="mono">${r.origin}</span></div>` : ""}
+                  </div>
+                </div>
+                <div class="amount ${r.direction === "refund" ? "red" : ""}">${signedFmt(r.amount)}</div>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+
+        <p style="text-align:center;color:var(--soft);font-size:12px;margin:10px 0 4px">— 已显示全部 ${todayLedger.length} 笔记录 —</p>
+      `;
+    }
+
+    function phoneLedgerSummary() {
+      // All hero numbers come from the server-side summary object —
+      // NOT reduced from `items` (which is just the currently-loaded page).
+      const { summary, items, pagination } = ledgerSummaryPage;
+      return `
+        <section class="period-summary">
+          <span class="ps-eyebrow">区间合计 · ${summary.totalDays} 个交易日</span>
+          <span class="ps-net"><span class="currency">¥</span>${fmt(summary.netAmount)}</span>
+          <span class="ps-net-label">净额（收款 − 退预约）</span>
+          <div class="ps-breakdown">
+            <div class="ps-cell income">
+              <span class="ps-cell-label"><span class="ps-dot"></span>收款</span>
+              <span class="ps-cell-value">${fmt(summary.incomeAmount)}</span>
+              <span class="ps-cell-sub">${summary.incomeCount} 笔</span>
+            </div>
+            <div class="ps-cell refund">
+              <span class="ps-cell-label"><span class="ps-dot"></span>退预约</span>
+              <span class="ps-cell-value">${fmt(summary.refundAmount)}</span>
+              <span class="ps-cell-sub">${summary.refundCount} 笔</span>
+            </div>
+          </div>
+          <div class="ps-trend">
+            ${chartPanel({
+              chip: selectedGranularity,
+              trendMap: ledgerTrendByGranularity,
+              gradientId: "ledger-area-gradient",
+              lineColor: "#7da6ff",
+              areaColor: "#4f86ff",
+              axisCenter: "每日净额趋势",
+              onChipSelect: "selectGranularity"
+            })}
+          </div>
+        </section>
+
+        <section class="card day-list-card">
+          ${items.map(([date, income, count, refund, refundCount]) => `
+            <div class="day-row-item clickable" onclick="setRoute('ledger')">
+              <div class="dri-head">
+                <span class="dri-date">${date}</span>
+                <span class="dri-net">${fmt(income - refund)}</span>
+              </div>
+              <div class="dri-meta">
+                <span class="dri-stat income">收款 <b>${fmt(income)}</b> · ${count} 笔</span>
+                <span class="dri-stat ${refund > 0 ? 'refund' : 'muted'}">退预约 <b>${fmt(refund)}</b> · ${refundCount} 笔</span>
+              </div>
+            </div>
+          `).join("")}
+          ${pagination.hasMore ? `
+            <div class="day-list-footer">
+              <span class="pull-arrow">↑</span>
+              <span class="pull-progress">上拉加载更多 · 已显示 <b>${pagination.loaded}</b> / <b>${pagination.total}</b> 天</span>
+            </div>
+          ` : `
+            <div class="day-list-footer">— 已显示全部 ${pagination.total} 天 —</div>
+          `}
+        </section>
+      `;
+    }
+
+    function phoneDetail() {
+      return `
+        ${hero({
+          title: "订单详情",
+          sub: "订单号 PAY20260323133654666832260",
+          eyebrow: "详情",
+          mode: "detail"
+        })}
+
+        <section class="amount-summary">
+          <span class="label">订单金额</span>
+          <span class="amount"><span class="currency">¥</span>2.00</span>
+          <span class="meta"><span class="tag">已支付</span> · 2026-03-23 13:37:01 · 国通-微信</span>
+        </section>
+
+        <section class="card">
+          <div class="card-header"><h4 class="card-title">订单信息</h4></div>
+          <div class="kv">
+            <span>手续费</span><b>0.00</b>
+            <span>状态</span><b>已支付</b>
+            <span>平台渠道</span><b>国通 - 微信</b>
+            <span>支付时间</span><b>2026-03-23 13:37:01</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">收款账户</h4>
+            <span class="tag blue">对公</span>
+          </div>
+          <div class="kv">
+            <span>账户别名</span><b>法人对私</b>
+            <span>平台渠道</span><b>国通 - 微信</b>
+            <span>商户号</span><b>60000014695205</b>
+            <span>结算卡号</span><b>0209****7637</b>
+            <span>开户行</span><b>中国农业银行</b>
+            <span>结算户名</span><b>天津宝坻城南新途径信息科技有限公司</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">分账详情</h4>
+            <span class="tag coral">分账失败</span>
+          </div>
+          <div class="kv">
+            <span>分账时间</span><b>2026-03-23 13:37:01</b>
+            <span>分账去向</span><b style="color:var(--coral-ink)">暂无分账记录</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">退款记录</h4>
+            <span class="tag">退款成功</span>
+          </div>
+          <div class="kv">
+            <span>退款金额</span><b>2.00</b>
+            <span>退款状态</span><b>退款成功</b>
+            <span>退款时间</span><b>2026-03-23 13:37:10</b>
+          </div>
+        </section>
+
+        <section class="banner danger">
+          <i class="b-icon" style="background:#fff;color:var(--coral-ink)">!</i>
+          <div class="b-text">
+            <b>分账失败,实得 0.00</b>
+            <small>请联系管理员核实分账配置,或重试分账</small>
+          </div>
+          <button class="btn ghost sm">联系</button>
+        </section>
+      `;
+    }
+
+    function phoneSettlement() {
+      // Current-filter summary — would come from the server keyed by date range.
+      const filterSummary = {
+        range: { from: "2026-05-12", to: "2026-05-18" },
+        totalDays: 7,
+        settledDays: 5,
+        netAmount: 37080.81,
+        guotongAmount: 35997.79,
+        wechatAmount: 1083.02
+      };
+      const rows = [
+        ["2026-05-18", 0, 0, 0],
+        ["2026-05-17", 17623.63, 16500.00, 1123.63],
+        ["2026-05-16", 3524.72, 3524.72, 0],
+        ["2026-05-15", 1762.36, 1762.36, 0],
+        ["2026-05-14", 8883.02, 7800.00, 1083.02],
+        ["2026-05-13", 5287.08, 5287.08, 0],
+        ["2026-05-12", 0, 0, 0]
+      ];
+      const hasData = rows.some(r => r[1] > 0);
+      const trendBuckets = [...rows].reverse().map(r => r[1]);
+      const trendMax = Math.max(...trendBuckets, 1);
+      const VW = 300, VH = 60, padTop = 6;
+      const n = trendBuckets.length;
+      const pts = trendBuckets.map((v, i) => {
+        const x = n === 1 ? VW / 2 : (i / (n - 1)) * VW;
+        const y = VH - (v / trendMax) * (VH - padTop);
+        return [x.toFixed(1), y.toFixed(1)];
+      });
+      const linePath = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${p[0]} ${p[1]}`).join(" ");
+      const areaPath = `${linePath} L ${VW} ${VH} L 0 ${VH} Z`;
+      const gtPct = filterSummary.netAmount ? (filterSummary.guotongAmount / filterSummary.netAmount * 100).toFixed(1) : "0.0";
+      const wxPct = filterSummary.netAmount ? (filterSummary.wechatAmount / filterSummary.netAmount * 100).toFixed(1) : "0.0";
+      const chipOptions = [
+        ["7天", "7 天"],
+        ["30天", "30 天"],
+        ["90天", "90 天"],
+        ["自定义", "自定义"]
+      ];
+      const isCustom = settlementChip === "自定义";
+      return `
+        ${hasData ? `
+          <section class="period-summary">
+            <span class="ps-eyebrow">区间到账 · ${filterSummary.settledDays} / ${filterSummary.totalDays} 个到账日</span>
+            <span class="ps-net"><span class="currency">¥</span>${fmt(filterSummary.netAmount)}</span>
+            <span class="ps-net-label">预计到账合计</span>
+            <div class="ps-breakdown">
+              <div class="ps-cell guotong">
+                <span class="ps-cell-label"><span class="ps-dot"></span>国通</span>
+                <span class="ps-cell-value">${fmt(filterSummary.guotongAmount)}</span>
+                <span class="ps-cell-sub">${gtPct}%</span>
+              </div>
+              <div class="ps-cell wechat">
+                <span class="ps-cell-label"><span class="ps-dot"></span>微信</span>
+                <span class="ps-cell-value">${fmt(filterSummary.wechatAmount)}</span>
+                <span class="ps-cell-sub">${wxPct}%</span>
+              </div>
+            </div>
+            <div class="ps-trend">
+              <div class="seg">
+                ${chipOptions.map(([key, label]) => `
+                  <span class="${settlementChip === key ? 'active' : ''}" onclick="selectSettlementChip('${key}')">${label}</span>
+                `).join("")}
+              </div>
+              ${isCustom ? `
+                <div class="ps-trend-controls">
+                  <div class="field select">
+                    <span class="leading">开始</span>
+                    <span class="value">${filterSummary.range.from}</span>
+                  </div>
+                  <div class="field select">
+                    <span class="leading">结束</span>
+                    <span class="value">${filterSummary.range.to}</span>
+                  </div>
+                </div>
+              ` : ''}
+              <svg class="area-chart" viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="settle-report-area" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#fbbf4f" stop-opacity="0.55"/>
+                    <stop offset="100%" stop-color="#fbbf4f" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="${areaPath}" fill="url(#settle-report-area)"/>
+                <path d="${linePath}" stroke="#fde68a" stroke-width="1.8" fill="none" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div class="sparkline-axis">
+                <span>${filterSummary.range.from}</span>
+                <span>每日到账趋势</span>
+                <span>${filterSummary.range.to}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card day-list-card">
+            <div class="list-search-head">
+              <div class="search">
+                ${icon("search")}
+                <span class="search-placeholder">标题 / 描述</span>
+              </div>
+            </div>
+            ${settlementRecords.map(settleRecordRow).join("")}
+            <div class="day-list-footer">— 共 ${settlementRecords.length} 笔记录 —</div>
+          </section>
+        ` : `
+          <section class="empty">
+            <div class="empty-icon">${icon("empty")}</div>
+            <b>暂无数据</b>
+            <p>当前筛选条件下没有结算记录,<br>可调整日期范围或关键词后重新查询。</p>
+            <div class="actions">
+              <button class="btn ghost sm">重置筛选</button>
+              <button class="btn primary sm">查看上月</button>
+            </div>
+          </section>
+        `}
+      `;
+    }
+
+    function phoneSettlementSummary() {
+      // Hero numbers come from the server-side summary; items is just the
+      // currently-loaded page — paging won't make the totals drift.
+      const { summary, items, pagination } = settlementSummaryPage;
+      const gtPct = summary.netAmount ? (summary.guotongAmount / summary.netAmount * 100).toFixed(1) : "0.0";
+      const wxPct = summary.netAmount ? (summary.wechatAmount / summary.netAmount * 100).toFixed(1) : "0.0";
+      return `
+        <section class="period-summary">
+          <span class="ps-eyebrow">区间到账 · ${summary.settledDays} / ${summary.totalDays} 个到账日</span>
+          <span class="ps-net"><span class="currency">¥</span>${fmt(summary.netAmount)}</span>
+          <span class="ps-net-label">预计到账合计</span>
+          <div class="ps-breakdown">
+            <div class="ps-cell guotong">
+              <span class="ps-cell-label"><span class="ps-dot"></span>国通</span>
+              <span class="ps-cell-value">${fmt(summary.guotongAmount)}</span>
+              <span class="ps-cell-sub">${gtPct}%</span>
+            </div>
+            <div class="ps-cell wechat">
+              <span class="ps-cell-label"><span class="ps-dot"></span>微信</span>
+              <span class="ps-cell-value">${fmt(summary.wechatAmount)}</span>
+              <span class="ps-cell-sub">${wxPct}%</span>
+            </div>
+          </div>
+          <div class="ps-trend">
+            ${chartPanel({
+              chip: selectedSettlementGranularity,
+              trendMap: settlementTrendByGranularity,
+              gradientId: "settle-area-gradient",
+              lineColor: "#fde68a",
+              areaColor: "#fbbf4f",
+              axisCenter: "每日到账趋势",
+              onChipSelect: "selectSettlementGranularity"
+            })}
+          </div>
+        </section>
+
+        <section class="card day-list-card">
+          ${items.map(([date, amount, gt, wx]) => `
+            <div class="day-row-item clickable" onclick="setRoute('settlement')">
+              <div class="dri-head">
+                <span class="dri-date">${date}</span>
+                <span class="dri-net" style="${amount > 0 ? '' : 'color:var(--soft);font-weight:600'}">${amount > 0 ? fmt(amount) : "未到账"}</span>
+              </div>
+              <div class="dri-meta">
+                <span class="dri-stat ${gt > 0 ? 'guotong' : 'muted'}">国通 <b>${fmt(gt)}</b></span>
+                <span class="dri-stat ${wx > 0 ? 'wechat' : 'muted'}">微信 <b>${fmt(wx)}</b></span>
+              </div>
+            </div>
+          `).join("")}
+          ${pagination.hasMore ? `
+            <div class="day-list-footer">
+              <span class="pull-arrow">↑</span>
+              <span class="pull-progress">上拉加载更多 · 已显示 <b>${pagination.loaded}</b> / <b>${pagination.total}</b> 天</span>
+            </div>
+          ` : `
+            <div class="day-list-footer">— 已显示全部 ${pagination.total} 天 —</div>
+          `}
+        </section>
+      `;
+    }
+
+    function phoneAccounts() {
+      return `
+        ${hero({
+          title: "收款户管理",
+          sub: "拖动调整顺序,默认账户优先用于收款。",
+          eyebrow: "账户"
+        })}
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">状态说明</h4>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="status-pill default">默认</span>
+            <span class="status-pill enabled">启用</span>
+            <span class="status-pill disabled">停用</span>
+          </div>
+        </section>
+
+        <section class="card sortable">
+          <div class="card-header">
+            <h4 class="card-title">账户列表</h4>
+            <span class="tag blue">拖动排序</span>
+          </div>
+          <div class="sort-item">
+            <span class="drag-handle">${icon("drag")}</span>
+            <div>
+              <b>国通</b>
+              <small>法人对私 · 中国农业银行<br/>0209 **** **** 7637</small>
+            </div>
+            <span class="status-pill default">默认</span>
+          </div>
+          <div class="sort-item">
+            <span class="drag-handle">${icon("drag")}</span>
+            <div>
+              <b>微信直连</b>
+              <small>法人对公 · 天津宝坻新途径<br/>6228 **** **** 0912</small>
+            </div>
+            <span class="status-pill enabled">启用</span>
+          </div>
+          <div class="sort-item">
+            <span class="drag-handle">${icon("drag")}</span>
+            <div>
+              <b>备用账户</b>
+              <small>对公 · 中国农业银行<br/>6228 **** **** 5520</small>
+            </div>
+            <span class="status-pill disabled">停用</span>
+          </div>
+        </section>
+
+        <section class="banner info">
+          <i class="b-icon" style="background:#fff;color:var(--sky-ink)">i</i>
+          <div class="b-text">
+            <b>排序仅影响后续订单</b>
+            <small>变更不影响已支付订单的结算去向。</small>
+          </div>
+          <span></span>
+        </section>
+
+        <div class="sticky-footer">
+          <div class="row">
+            <button class="btn ghost">取消</button>
+            <button class="btn primary" style="flex:1;margin-left:8px">保存排序</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function phoneNotice() {
+      return `
+        ${hero({
+          title: "通知订阅",
+          sub: "管理身份下的收款、退款、分账等事件推送。",
+          eyebrow: "通知",
+          mode: "notice"
+        })}
+
+        <section class="stat-grid" style="--cols:2">
+          <div class="stat accent-sky"><label>可管理身份</label><strong>0</strong><small>当前账号</small></div>
+          <div class="stat accent-coral"><label>可订阅事件</label><strong>0</strong><small>当前账号</small></div>
+        </section>
+
+        <section class="empty">
+          <div class="empty-icon">${icon("bell")}</div>
+          <b>暂无可管理身份</b>
+          <p>当前账号暂未返回可配置的通知订阅。<br/>可联系管理员开通对应的身份权限。</p>
+          <div class="actions">
+            <button class="btn ghost sm">查看权限说明</button>
+            <button class="btn primary sm">联系管理员</button>
+          </div>
+        </section>
+
+        <section class="card flat">
+          <div class="card-header"><h4 class="card-title">即将上线</h4></div>
+          <ul style="margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.8">
+            <li>按收款账户单独配置告警阈值</li>
+            <li>分账失败、退款超时等异常事件推送</li>
+            <li>多通道推送(站内信 / 短信 / 企业微信)</li>
+          </ul>
+        </section>
+      `;
+    }
+
+    function phoneSettlementDetail() {
+      const d = settlementDetailMock;
+      return `
+        <section class="period-summary">
+          <span class="ps-eyebrow">${d.status} · ${d.time}</span>
+          <span class="ps-net"><span class="currency">¥</span>${fmt(d.amount)}</span>
+          <span class="ps-net-label">变动金额(已扣手续费)</span>
+          <div class="ps-breakdown">
+            <div class="ps-cell">
+              <span class="ps-cell-label" style="color:rgba(255,255,255,.7)">原订单金额</span>
+              <span class="ps-cell-value">${fmt(d.originalAmount)}</span>
+              <span class="ps-cell-sub">扣前金额</span>
+            </div>
+            <div class="ps-cell">
+              <span class="ps-cell-label" style="color:rgba(255,255,255,.7)">手续费</span>
+              <span class="ps-cell-value">−${fmt(d.fee)}</span>
+              <span class="ps-cell-sub">${(d.fee / d.originalAmount * 100).toFixed(2)}%</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">基本信息</h4>
+            <span class="tag blue">${d.base.platform} · ${d.base.channel}</span>
+          </div>
+          <div class="kv">
+            <span>租户</span><b>${d.base.tenant}</b>
+            <span>商户号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${d.base.merchantId}</b>
+            <span>账户别名</span><b>${d.base.accountAlias}</b>
+            <span>对方租户</span><b>${d.base.counterTenant}</b>
+            <span>对方商户号</span><b>${d.base.counterMerchantId}</b>
+            <span>对方账户别名</span><b>${d.base.counterAccountAlias}</b>
+            <span>平台</span><b>${d.base.platform}</b>
+            <span>渠道</span><b>${d.base.channel}</b>
+            <span>业务类型</span><b>${d.base.business}</b>
+            <span>应用名称</span><b>${d.base.appName}</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header"><h4 class="card-title">订单信息</h4></div>
+          <div class="kv">
+            <span>变动单号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all">${d.order.changeId}</b>
+            <span>系统订单号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all">${d.order.systemOrderId}</b>
+            <span>名称</span><b>${d.order.name}</b>
+            <span>订单名称</span><b>${d.order.orderName}</b>
+            <span>订单描述</span><b>${d.order.orderDesc}</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">结算卡信息</h4>
+            <span class="tag gray">${d.card.bank}</span>
+          </div>
+          <div class="kv">
+            <span>结算卡户名</span><b>${d.card.holderName}</b>
+            <span>结算卡号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${d.card.cardNumber}</b>
+            <span>结算卡开户行</span><b>${d.card.bank}</b>
+          </div>
+        </section>
+      `;
+    }
+
+    function phoneEmpty() {
+      return `
+        <section class="page-empty">
+          <div class="page-empty-illu">${emptyIllustration()}</div>
+          <h3>暂无收款记录</h3>
+          <p>当前筛选条件下没有交易,可尝试调整日期范围、清除关键词,或发起首笔收款。</p>
+          <div class="actions">
+            <button class="btn ghost sm" onclick="setRoute('ledger')">刷新数据</button>
+            <button class="btn primary sm" onclick="setRoute('accounts')">发起首笔收款</button>
+          </div>
+          <div class="page-empty-foot">遇到问题?<a href="#" onclick="event.preventDefault()">查看帮助文档</a></div>
+        </section>
+
+        <div class="empty-section-title">你可以尝试</div>
+        ${emptySteps()}
+      `;
+    }
+
+    const phonePages = {
+      overview: phoneOverview,
+      ledger: phoneLedger,
+      ledgerSummary: phoneLedgerSummary,
+      detail: phoneDetail,
+      settlement: phoneSettlement,
+      settlementSummary: phoneSettlementSummary,
+      settlementDetail: phoneSettlementDetail,
+      accounts: phoneAccounts,
+      notice: phoneNotice,
+      empty: phoneEmpty
+    };
+
+    /* ====================== iPad pages ====================== */
+    function padHeader(title, sub, actions = "") {
+      return `
+        <div class="pad-header">
+          <div>
+            <h2>${title}</h2>
+            <p>${sub}</p>
+          </div>
+          ${actions ? `<div class="actions">${actions}</div>` : ""}
+        </div>`;
+    }
+
+    function padOverview() {
+      const spark = [4, 6, 5, 8, 7, 9, 14, 11, 12, 15, 13, 18];
+      const settleSpark = [3, 4, 5, 4, 7, 6, 9, 8, 11, 14, 12, 16];
+      return `
+        ${padHeader(
+          "校区在线收款概览",
+          "切换查询范围、查看交易与结算关键指标,管理默认账户与通知订阅。"
+        )}
+
+        <section class="card">
+          <div class="card-header">
+            <h4 class="card-title">查询范围</h4>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+            <div class="field select">
+              <span class="leading">角色</span>
+              <span class="value">超级管理员</span>
+            </div>
+            <div class="field select">
+              <span class="leading">应用</span>
+              <span class="value">新途径报名</span>
+            </div>
+            <div class="field select">
+              <span class="leading">租户</span>
+              <span class="value">天津宝坻新途径</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px">
+            <div class="search">
+              ${icon("search")}
+              <span class="search-placeholder">订单号 / 标题 / 描述</span>
+            </div>
+            <button class="btn primary" onclick="setRoute('ledger')">查询</button>
+          </div>
+        </section>
+
+        <section class="pad-kpis">
+          <div class="pad-kpi" onclick="setRoute('ledger')">
+            <header>
+              <i class="icon">${icon("ledger")}</i>
+              <span class="title">交易记录</span>
+              <button class="btn link sm" style="margin-left:auto" onclick="event.stopPropagation();setRoute('ledger')">更多 ${icon("right")}</button>
+            </header>
+            <div class="value">¥ 19,800.00</div>
+            <div class="footer">收款 1 笔 · 退预约 0 笔</div>
+            <div class="sparkline" style="margin-top:10px">${spark.map(v => `<i style="height:${v * 3}px"></i>`).join("")}</div>
+          </div>
+          <div class="pad-kpi" onclick="setRoute('settlement')">
+            <header>
+              <i class="icon amber">${icon("settle")}</i>
+              <span class="title">结算报表</span>
+              <button class="btn link sm" style="margin-left:auto" onclick="event.stopPropagation();setRoute('settlement')">更多 ${icon("right")}</button>
+            </header>
+            <div class="value">¥ 17,623.63</div>
+            <div class="footer">国通 17,623.63 · 微信 0.00</div>
+            <div class="sparkline amber" style="margin-top:10px">${settleSpark.map(v => `<i style="height:${v * 3}px"></i>`).join("")}</div>
+          </div>
+          <div class="pad-kpi" onclick="setRoute('accounts')">
+            <header>
+              <i class="icon violet">${icon("card")}</i>
+              <span class="title">默认账户</span>
+            </header>
+            <div class="value" style="font-size:16px">法人对私</div>
+            <div class="footer">国通 · 0209 **** 7637</div>
+            <div style="margin-top:10px;display:flex;gap:4px">
+              <span class="status-pill default" style="height:22px;font-size:11px;padding:0 8px">默认</span>
+              <span class="tag gray">3 个账户</span>
+            </div>
+          </div>
+          <div class="pad-kpi" onclick="setRoute('notice')">
+            <header>
+              <i class="icon coral">${icon("bell")}</i>
+              <span class="title">通知订阅</span>
+            </header>
+            <div class="value" style="font-size:16px">未启用</div>
+            <div class="footer">可管理身份 0 · 事件 0</div>
+            <div style="margin-top:10px;display:flex;gap:4px">
+              <span class="tag coral">需配置</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="pad-grid equal">
+          <section class="card">
+            <div class="card-header">
+              <h4 class="card-title"><i class="icon">${icon("ledger")}</i>今日订单</h4>
+              <button class="btn link" onclick="setRoute('ledger')">查看全部 ${icon("right")}</button>
+            </div>
+            <table class="pad-table">
+              <thead><tr><th>类型</th><th>订单</th><th>时间</th><th>金额</th></tr></thead>
+              <tbody>
+                ${todayLedger.map(r => `
+                  <tr class="row" onclick="selectLedger('${r.id}');setRoute('ledger')">
+                    <td><span class="row-direction ${r.direction === "refund" ? "red" : ""}">${r.direction === "refund" ? "退款" : "收款"}</span></td>
+                    <td>${r.title}<br/><span class="mono">${r.id}</span></td>
+                    <td>${r.time.slice(11)}</td>
+                    <td class="amt ${r.direction === "refund" ? "red" : "green"}">${signedFmt(r.amount)}</td>
+                  </tr>`).join("")}
+              </tbody>
+            </table>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <h4 class="card-title"><i class="icon amber">${icon("calendar")}</i>近 7 日到账</h4>
+              <button class="btn link" onclick="setRoute('settlementSummary')">查看全部 ${icon("right")}</button>
+            </div>
+            <table class="pad-table">
+              <thead><tr><th>日期</th><th>渠道</th><th>金额</th></tr></thead>
+              <tbody>
+                ${settlementSummaryRows.slice(0, 5).map(([d, amt]) => `
+                  <tr class="row" onclick="setRoute('settlement')">
+                    <td>${d}</td>
+                    <td>国通 / 微信</td>
+                    <td class="amt ${amt > 0 ? "green" : ""}" style="color:${amt > 0 ? "var(--mint-ink)" : "var(--muted)"}">${fmt(amt)}</td>
+                  </tr>`).join("")}
+              </tbody>
+            </table>
+          </section>
+        </div>
+      `;
+    }
+
+    function padLedger() {
+      const selected = todayLedger.find(r => r.id === selectedLedger) || todayLedger[0];
+      const incomeTotal = todayLedger.filter(r => r.direction === "income").reduce((a, b) => a + b.amount, 0);
+      const refundTotal = todayLedger.filter(r => r.direction === "refund").reduce((a, b) => a + Math.abs(b.amount), 0);
+      const incomeCount = todayLedger.filter(r => r.direction === "income").length;
+      const refundCount = todayLedger.filter(r => r.direction === "refund").length;
+      const netAmount = incomeTotal - refundTotal;
+      return `
+        <section class="period-summary split">
+          <span class="ps-eyebrow">今日交易 · ${todayLedger.length} 笔</span>
+          <span class="ps-net"><span class="currency">¥</span>${fmt(netAmount)}</span>
+          <span class="ps-net-label">净额(收款 − 退款)</span>
+          <div class="ps-breakdown">
+            <div class="ps-cell income">
+              <span class="ps-cell-label"><span class="ps-dot"></span>收款</span>
+              <span class="ps-cell-value">${fmt(incomeTotal)}</span>
+              <span class="ps-cell-sub">${incomeCount} 笔</span>
+            </div>
+            <div class="ps-cell refund">
+              <span class="ps-cell-label"><span class="ps-dot"></span>退款</span>
+              <span class="ps-cell-value">${fmt(refundTotal)}</span>
+              <span class="ps-cell-sub">${refundCount} 笔</span>
+            </div>
+          </div>
+          <div class="ps-trend">
+            ${chartPanel({
+              chip: ledgerChartChip,
+              trendMap: ledgerTrendByGranularity,
+              gradientId: "pad-ledger-area-gradient",
+              lineColor: "#7da6ff",
+              areaColor: "#4f86ff",
+              axisCenter: "每日交易趋势",
+              onChipSelect: "selectLedgerChartChip"
+            })}
+          </div>
+        </section>
+
+        <div class="pad-grid master-detail">
+          <div>
+            <section class="card">
+              <div class="search">
+                ${icon("search")}
+                <span class="search-placeholder">订单号 / 标题</span>
+              </div>
+              <div class="seg" style="margin-top:10px">
+                <span class="active">全部</span><span>收款</span><span>退款</span>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h4 class="card-title">订单列表</h4>
+                <span class="tag gray">共 ${todayLedger.length} 笔</span>
+              </div>
+              <div class="list-rows">
+                ${todayLedger.map(r => `
+                  <div class="row ${r.id === selectedLedger ? "selected" : ""}" onclick="selectLedger('${r.id}')">
+                    <div>
+                      <div class="title">
+                        <span class="row-direction ${r.direction === "refund" ? "red" : ""}">${r.direction === "refund" ? "退款" : "收款"}</span>
+                        ${r.title}
+                      </div>
+                      <div class="meta">
+                        <div class="mono">${r.id}</div>
+                        <div>${r.time} · 手续费 ${fmt(r.fee)}</div>
+                      </div>
+                    </div>
+                    <div class="amount ${r.direction === "refund" ? "red" : ""}">${signedFmt(r.amount)}</div>
+                  </div>
+                `).join("")}
+              </div>
+            </section>
+          </div>
+
+          <div>
+            <section class="amount-summary" style="text-align:left">
+              <span class="label">${selected.direction === "refund" ? "退款金额" : "订单金额"}</span>
+              <span class="amount" style="font-size:30px"><span class="currency">¥</span>${signedFmt(selected.amount)}</span>
+              <span class="meta">
+                <span class="tag ${selected.direction === "refund" ? "coral" : ""}">${selected.direction === "refund" ? "已退款" : "已支付"}</span>
+                · ${selected.time}
+              </span>
+            </section>
+
+            <section class="card">
+              <div class="card-header"><h4 class="card-title">订单信息</h4></div>
+              <div class="kv">
+                <span>订单号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12px">${selected.id}</b>
+                ${selected.origin ? `<span>原订单</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12px">${selected.origin}</b>` : ""}
+                <span>商品标题</span><b>${selected.title}</b>
+                <span>手续费</span><b>${fmt(selected.fee)}</b>
+                <span>平台渠道</span><b>国通 - 微信</b>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h4 class="card-title">收款账户</h4>
+                <button class="btn link" onclick="setRoute('detail')">查看完整详情 ${icon("right")}</button>
+              </div>
+              <div class="kv">
+                <span>账户</span><b>法人对私 · 国通</b>
+                <span>商户号</span><b>60000014695205</b>
+                <span>结算卡</span><b>中国农业银行 0209****7637</b>
+              </div>
+            </section>
+
+            ${selected.direction === "income" ? `
+              <section class="banner danger">
+                <i class="b-icon" style="background:#fff;color:var(--coral-ink)">!</i>
+                <div class="b-text">
+                  <b>分账失败</b>
+                  <small>请联系管理员核实分账配置</small>
+                </div>
+                <button class="btn ghost sm">联系</button>
+              </section>` : `
+              <section class="banner success">
+                <i class="b-icon" style="background:#fff;color:var(--mint-ink)">✓</i>
+                <div class="b-text">
+                  <b>退款已完成</b>
+                  <small>2026-03-23 13:37:10 已原路退回</small>
+                </div>
+                <span></span>
+              </section>`}
+          </div>
+        </div>
+      `;
+    }
+
+    function padLedgerSummary() {
+      const totalIncome = ledgerSummaryRows.reduce((a, r) => a + r[1], 0);
+      const totalCount = ledgerSummaryRows.reduce((a, r) => a + r[2], 0);
+      const totalRefund = ledgerSummaryRows.reduce((a, r) => a + r[3], 0);
+      const totalRefundCount = ledgerSummaryRows.reduce((a, r) => a + r[4], 0);
+      const max = Math.max(...ledgerSummaryRows.map(r => r[1]));
+      return `
+        <section class="period-summary split">
+          <span class="ps-eyebrow">区间合计 · ${ledgerSummaryRows.length} 个交易日</span>
+          <span class="ps-net"><span class="currency">¥</span>${fmt(totalIncome - totalRefund)}</span>
+          <span class="ps-net-label">净额(收款 − 退预约)</span>
+          <div class="ps-breakdown">
+            <div class="ps-cell income">
+              <span class="ps-cell-label"><span class="ps-dot"></span>收款</span>
+              <span class="ps-cell-value">${fmt(totalIncome)}</span>
+              <span class="ps-cell-sub">${totalCount} 笔</span>
+            </div>
+            <div class="ps-cell refund">
+              <span class="ps-cell-label"><span class="ps-dot"></span>退预约</span>
+              <span class="ps-cell-value">${fmt(totalRefund)}</span>
+              <span class="ps-cell-sub">${totalRefundCount} 笔</span>
+            </div>
+          </div>
+          <div class="ps-trend">
+            ${chartPanel({
+              chip: selectedGranularity,
+              trendMap: ledgerTrendByGranularity,
+              gradientId: "pad-ledger-summary-area",
+              lineColor: "#7da6ff",
+              areaColor: "#4f86ff",
+              axisCenter: "每日净额趋势",
+              onChipSelect: "selectGranularity"
+            })}
+          </div>
+        </section>
+
+        <section class="card">
+          <table class="pad-table">
+            <thead>
+              <tr>
+                <th style="width:120px">日期</th>
+                <th>分布</th>
+                <th style="width:140px">收款</th>
+                <th style="width:140px">退预约</th>
+                <th style="width:120px">净额</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ledgerSummaryRows.map(([date, income, count, refund, refundCount]) => `
+                <tr class="row" onclick="setRoute('ledger')">
+                  <td><b>${date}</b></td>
+                  <td><div class="bar"><i style="width:${(income / max * 100).toFixed(0)}%"></i></div></td>
+                  <td class="amt green">${fmt(income)}<span class="mono" style="display:block;font-weight:500;color:var(--muted);margin-top:2px">${count} 笔</span></td>
+                  <td class="amt ${refund > 0 ? 'red' : ''}" style="${refund > 0 ? '' : 'color:var(--muted);font-weight:600'}">${fmt(refund)}<span class="mono" style="display:block;font-weight:500;color:var(--muted);margin-top:2px">${refundCount} 笔</span></td>
+                  <td class="amt">${fmt(income - refund)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </section>
+      `;
+    }
+
+    function padDetail() {
+      return `
+        ${padHeader(
+          "订单详情",
+          "订单号 PAY20260323133654666832260"
+        )}
+
+        <div class="pad-grid">
+          <div>
+            <section class="amount-summary" style="text-align:left">
+              <span class="label">订单金额</span>
+              <span class="amount" style="font-size:32px"><span class="currency">¥</span>2.00</span>
+              <span class="meta"><span class="tag">已支付</span> · 2026-03-23 13:37:01 · 国通-微信</span>
+            </section>
+
+            <section class="card">
+              <div class="card-header"><h4 class="card-title">订单信息</h4></div>
+              <div class="kv">
+                <span>手续费</span><b>0.00</b>
+                <span>状态</span><b>已支付</b>
+                <span>平台渠道</span><b>国通 - 微信</b>
+                <span>支付时间</span><b>2026-03-23 13:37:01</b>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h4 class="card-title">分账详情</h4>
+                <span class="tag coral">分账失败</span>
+              </div>
+              <div class="kv">
+                <span>分账时间</span><b>2026-03-23 13:37:01</b>
+                <span>分账去向</span><b style="color:var(--coral-ink)">暂无分账记录</b>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h4 class="card-title">退款记录</h4>
+                <span class="tag">退款成功</span>
+              </div>
+              <div class="kv">
+                <span>退款金额</span><b>2.00</b>
+                <span>退款状态</span><b>退款成功</b>
+                <span>退款时间</span><b>2026-03-23 13:37:10</b>
+              </div>
+            </section>
+          </div>
+
+          <div>
+            <section class="card">
+              <div class="card-header">
+                <h4 class="card-title">收款账户</h4>
+                <span class="tag blue">对公</span>
+              </div>
+              <div class="kv">
+                <span>账户别名</span><b>法人对私</b>
+                <span>平台渠道</span><b>国通 - 微信</b>
+                <span>商户号</span><b>60000014695205</b>
+                <span>结算卡号</span><b>0209****7637</b>
+                <span>开户行</span><b>中国农业银行</b>
+                <span>结算户名</span><b>天津宝坻城南新途径信息科技有限公司</b>
+              </div>
+            </section>
+
+            <section class="banner danger">
+              <i class="b-icon" style="background:#fff;color:var(--coral-ink)">!</i>
+              <div class="b-text">
+                <b>分账失败,实得 0.00</b>
+                <small>请联系管理员核实分账配置,或重试分账</small>
+              </div>
+              <button class="btn ghost sm">联系</button>
+            </section>
+
+          </div>
+        </div>
+      `;
+    }
+
+    function padSettlement() {
+      const filterSummary = {
+        range: { from: "2026-05-12", to: "2026-05-18" },
+        totalDays: 7,
+        settledDays: 5,
+        netAmount: 37080.81,
+        guotongAmount: 35997.79,
+        wechatAmount: 1083.02
+      };
+      const hasData = settlementRecords.length > 0;
+      const gtPct = filterSummary.netAmount ? (filterSummary.guotongAmount / filterSummary.netAmount * 100).toFixed(1) : "0.0";
+      const wxPct = filterSummary.netAmount ? (filterSummary.wechatAmount / filterSummary.netAmount * 100).toFixed(1) : "0.0";
+      return `
+        ${hasData ? `
+          <section class="period-summary split">
+            <span class="ps-eyebrow">区间到账 · ${filterSummary.settledDays} / ${filterSummary.totalDays} 个到账日</span>
+            <span class="ps-net"><span class="currency">¥</span>${fmt(filterSummary.netAmount)}</span>
+            <span class="ps-net-label">预计到账合计</span>
+            <div class="ps-breakdown">
+              <div class="ps-cell guotong">
+                <span class="ps-cell-label"><span class="ps-dot"></span>国通</span>
+                <span class="ps-cell-value">${fmt(filterSummary.guotongAmount)}</span>
+                <span class="ps-cell-sub">${gtPct}%</span>
+              </div>
+              <div class="ps-cell wechat">
+                <span class="ps-cell-label"><span class="ps-dot"></span>微信</span>
+                <span class="ps-cell-value">${fmt(filterSummary.wechatAmount)}</span>
+                <span class="ps-cell-sub">${wxPct}%</span>
+              </div>
+            </div>
+            <div class="ps-trend">
+              ${chartPanel({
+                chip: settlementChip,
+                trendMap: settlementTrendByGranularity,
+                gradientId: "pad-settle-report-area",
+                lineColor: "#fde68a",
+                areaColor: "#fbbf4f",
+                axisCenter: "每日到账趋势",
+                onChipSelect: "selectSettlementChip"
+              })}
+            </div>
+          </section>
+
+          <section class="card day-list-card">
+            <div class="list-search-head">
+              <div class="search">
+                ${icon("search")}
+                <span class="search-placeholder">标题 / 描述</span>
+              </div>
+            </div>
+            ${settlementRecords.map(settleRecordRow).join("")}
+            <div class="day-list-footer">— 共 ${settlementRecords.length} 笔记录 —</div>
+          </section>
+        ` : `
+          <section class="empty">
+            <div class="empty-icon">${icon("empty")}</div>
+            <b>暂无数据</b>
+            <p>当前筛选条件下没有结算记录,<br>可调整日期范围或关键词后重新查询。</p>
+          </section>
+        `}
+      `;
+    }
+
+    function padSettlementSummary() {
+      const total = settlementSummaryRows.reduce((a, r) => a + r[1], 0);
+      const hits = settlementSummaryRows.filter(r => r[1] > 0).length;
+      const max = Math.max(...settlementSummaryRows.map(r => r[1]));
+      // 渠道分布:用 settlementSummaryPage 里现成的国通/微信占比展示
+      const sumSrv = settlementSummaryPage.summary;
+      const gtPct = sumSrv.netAmount ? (sumSrv.guotongAmount / sumSrv.netAmount * 100).toFixed(1) : "0.0";
+      const wxPct = sumSrv.netAmount ? (sumSrv.wechatAmount / sumSrv.netAmount * 100).toFixed(1) : "0.0";
+      return `
+        <section class="period-summary split">
+          <span class="ps-eyebrow">区间到账 · ${hits} / ${settlementSummaryRows.length} 个到账日 · 单日峰值 ${fmt(max)}</span>
+          <span class="ps-net"><span class="currency">¥</span>${fmt(sumSrv.netAmount)}</span>
+          <span class="ps-net-label">预计到账合计</span>
+          <div class="ps-breakdown">
+            <div class="ps-cell guotong">
+              <span class="ps-cell-label"><span class="ps-dot"></span>国通</span>
+              <span class="ps-cell-value">${fmt(sumSrv.guotongAmount)}</span>
+              <span class="ps-cell-sub">${gtPct}%</span>
+            </div>
+            <div class="ps-cell wechat">
+              <span class="ps-cell-label"><span class="ps-dot"></span>微信</span>
+              <span class="ps-cell-value">${fmt(sumSrv.wechatAmount)}</span>
+              <span class="ps-cell-sub">${wxPct}%</span>
+            </div>
+          </div>
+          <div class="ps-trend">
+            ${chartPanel({
+              chip: selectedSettlementGranularity,
+              trendMap: settlementTrendByGranularity,
+              gradientId: "pad-settle-summary-area",
+              lineColor: "#fde68a",
+              areaColor: "#fbbf4f",
+              axisCenter: "每日到账趋势",
+              onChipSelect: "selectSettlementGranularity"
+            })}
+          </div>
+        </section>
+
+        <section class="card">
+          <table class="pad-table">
+            <thead><tr><th>日期</th><th>分布</th><th style="width:140px">金额</th></tr></thead>
+            <tbody>
+              ${settlementSummaryRows.map(([date, amount]) => `
+                <tr class="row" onclick="setRoute('settlement')">
+                  <td>${date}</td>
+                  <td><div class="bar"><i style="width:${max ? (amount / max * 100).toFixed(0) : 0}%"></i></div></td>
+                  <td class="amt" style="color:${amount > 0 ? "var(--mint-ink)" : "var(--muted)"}">${fmt(amount)}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </section>
+      `;
+    }
+
+    function padAccounts() {
+      return `
+        ${padHeader(
+          "收款户管理",
+          "拖动调整顺序,默认账户优先用于收款;变更不影响已支付订单。",
+          `<button class="btn ghost sm">取消</button>
+           <button class="btn primary sm">保存排序</button>`
+        )}
+
+        <div class="pad-grid equal">
+          <section class="card sortable">
+            <div class="card-header">
+              <h4 class="card-title">账户列表</h4>
+              <span class="tag blue">拖动排序</span>
+            </div>
+            <div class="sort-item">
+              <span class="drag-handle">${icon("drag")}</span>
+              <div>
+                <b>国通</b>
+                <small>法人对私 · 中国农业银行 · 0209 **** 7637</small>
+              </div>
+              <span class="status-pill default">默认</span>
+            </div>
+            <div class="sort-item">
+              <span class="drag-handle">${icon("drag")}</span>
+              <div>
+                <b>微信直连</b>
+                <small>法人对公 · 天津宝坻新途径 · 6228 **** 0912</small>
+              </div>
+              <span class="status-pill enabled">启用</span>
+            </div>
+            <div class="sort-item">
+              <span class="drag-handle">${icon("drag")}</span>
+              <div>
+                <b>备用账户</b>
+                <small>对公 · 中国农业银行 · 6228 **** 5520</small>
+              </div>
+              <span class="status-pill disabled">停用</span>
+            </div>
+          </section>
+
+          <div>
+            <section class="card">
+              <div class="card-header"><h4 class="card-title">操作说明</h4></div>
+              <ul style="margin:0;padding-left:18px;color:var(--muted);font-size:13px;line-height:1.8">
+                <li>排序后顶部账户为默认收款账户</li>
+                <li>变更仅影响后续新订单,已支付订单结算去向不变</li>
+                <li>停用账户不会出现在收款选项中,但保留历史记录</li>
+              </ul>
+            </section>
+
+            <section class="card tint-sky">
+              <div class="card-header">
+                <h4 class="card-title">状态说明</h4>
+              </div>
+              <div style="display:grid;gap:10px;font-size:13px">
+                <div style="display:flex;align-items:center;gap:10px"><span class="status-pill default">默认</span><span style="color:var(--muted)">优先用于自动收款</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span class="status-pill enabled">启用</span><span style="color:var(--muted)">用户可在收款时手动选择</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span class="status-pill disabled">停用</span><span style="color:var(--muted)">不再用于新订单</span></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    function padNotice() {
+      return `
+        ${padHeader(
+          "通知订阅",
+          "管理身份下的收款、退款、分账等事件推送。",
+          `<button class="btn ghost sm">权限说明</button>
+           <button class="btn primary sm">联系管理员</button>`
+        )}
+
+        <section class="pad-kpis" style="grid-template-columns:repeat(2,1fr);max-width:520px">
+          <div class="pad-kpi"><header><i class="icon">${icon("card")}</i><span class="title">可管理身份</span></header><div class="value">0</div><div class="footer">当前账号</div></div>
+          <div class="pad-kpi"><header><i class="icon coral">${icon("bell")}</i><span class="title">可订阅事件</span></header><div class="value">0</div><div class="footer">当前账号</div></div>
+        </section>
+
+        <section class="empty" style="padding:48px 24px">
+          <div class="empty-icon" style="width:72px;height:72px">${icon("bell")}</div>
+          <b>暂无可管理身份</b>
+          <p>当前账号暂未返回可配置的通知订阅。<br/>可联系管理员开通对应身份的权限。</p>
+          <div class="actions">
+            <button class="btn ghost">查看权限说明</button>
+            <button class="btn primary">联系管理员</button>
+          </div>
+        </section>
+
+        <section class="card flat">
+          <div class="card-header"><h4 class="card-title">即将上线</h4></div>
+          <div class="stat-grid" style="--cols:3">
+            <div class="stat bordered"><label>账户级告警</label><strong style="font-size:14px">按账户配置</strong><small>金额阈值、单日笔数</small></div>
+            <div class="stat bordered"><label>异常事件</label><strong style="font-size:14px">分账 / 退款</strong><small>失败、超时自动推送</small></div>
+            <div class="stat bordered"><label>多通道</label><strong style="font-size:14px">站内 / 短信 / 微信</strong><small>支持组合订阅</small></div>
+          </div>
+        </section>
+      `;
+    }
+
+    function padSettlementDetail() {
+      const d = settlementDetailMock;
+      return `
+        ${padHeader(
+          "结算详情",
+          `单号 ${d.order.changeId}`,
+          `<button class="btn ghost sm" onclick="setRoute('settlement')">返回列表</button>`
+        )}
+
+        <div class="pad-grid">
+          <div>
+            <section class="period-summary">
+              <span class="ps-eyebrow">${d.status} · ${d.time}</span>
+              <span class="ps-net"><span class="currency">¥</span>${fmt(d.amount)}</span>
+              <span class="ps-net-label">变动金额(已扣手续费)</span>
+              <div class="ps-breakdown">
+                <div class="ps-cell">
+                  <span class="ps-cell-label" style="color:rgba(255,255,255,.7)">原订单金额</span>
+                  <span class="ps-cell-value">${fmt(d.originalAmount)}</span>
+                  <span class="ps-cell-sub">扣前金额</span>
+                </div>
+                <div class="ps-cell">
+                  <span class="ps-cell-label" style="color:rgba(255,255,255,.7)">手续费</span>
+                  <span class="ps-cell-value">−${fmt(d.fee)}</span>
+                  <span class="ps-cell-sub">${(d.fee / d.originalAmount * 100).toFixed(2)}%</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header"><h4 class="card-title">订单信息</h4></div>
+              <div class="kv">
+                <span>变动单号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all">${d.order.changeId}</b>
+                <span>系统订单号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12px;word-break:break-all">${d.order.systemOrderId}</b>
+                <span>名称</span><b>${d.order.name}</b>
+                <span>订单名称</span><b>${d.order.orderName}</b>
+                <span>订单描述</span><b>${d.order.orderDesc}</b>
+              </div>
+            </section>
+          </div>
+
+          <div>
+            <section class="card">
+              <div class="card-header">
+                <h4 class="card-title">基本信息</h4>
+                <span class="tag blue">${d.base.platform} · ${d.base.channel}</span>
+              </div>
+              <div class="kv">
+                <span>租户</span><b>${d.base.tenant}</b>
+                <span>商户号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${d.base.merchantId}</b>
+                <span>账户别名</span><b>${d.base.accountAlias}</b>
+                <span>对方租户</span><b>${d.base.counterTenant}</b>
+                <span>对方商户号</span><b>${d.base.counterMerchantId}</b>
+                <span>对方账户别名</span><b>${d.base.counterAccountAlias}</b>
+                <span>平台</span><b>${d.base.platform}</b>
+                <span>渠道</span><b>${d.base.channel}</b>
+                <span>业务类型</span><b>${d.base.business}</b>
+                <span>应用名称</span><b>${d.base.appName}</b>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h4 class="card-title">结算卡信息</h4>
+                <span class="tag gray">${d.card.bank}</span>
+              </div>
+              <div class="kv">
+                <span>结算卡户名</span><b>${d.card.holderName}</b>
+                <span>结算卡号</span><b style="font-family:ui-monospace,Menlo,monospace;font-size:12.5px">${d.card.cardNumber}</b>
+                <span>结算卡开户行</span><b>${d.card.bank}</b>
+              </div>
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    function padEmpty() {
+      return `
+        ${padHeader(
+          "暂无收款记录",
+          "当前筛选条件下没有任何交易,你可以调整筛选条件、查看演示数据,或直接发起一笔收款。",
+          `<button class="btn ghost sm" onclick="setRoute('ledger')">刷新数据</button>
+           <button class="btn primary sm" onclick="setRoute('accounts')">发起首笔收款</button>`
+        )}
+
+        <section class="pad-empty-hero">
+          <div class="page-empty-illu">${emptyIllustration()}</div>
+          <div class="copy page-empty">
+            <h3>没有数据,不代表没有进展</h3>
+            <p>账户已就绪,只差一次真实交易就能开始累积数据。先发起一笔测试收款,或浏览演示账单熟悉对账与结算流程。</p>
+            <div class="actions">
+              <button class="btn primary sm" onclick="setRoute('accounts')">发起首笔收款</button>
+              <button class="btn ghost sm" onclick="setRoute('ledgerSummary')">查看演示账单</button>
+            </div>
+          </div>
+        </section>
+
+        <div class="empty-section-title">你可以尝试</div>
+        ${emptySteps()}
+      `;
+    }
+
+    const padPages = {
+      overview: padOverview,
+      ledger: padLedger,
+      ledgerSummary: padLedgerSummary,
+      detail: padDetail,
+      settlement: padSettlement,
+      settlementSummary: padSettlementSummary,
+      settlementDetail: padSettlementDetail,
+      accounts: padAccounts,
+      notice: padNotice,
+      empty: padEmpty
+    };
+
+    /* ====================== Render ====================== */
+    function renderTabs() {
+      document.getElementById("tabs").innerHTML = routes.map(route => `
+        <button class="${route.key === current ? "active" : ""}" onclick="setRoute('${route.key}')">${route.label}</button>
+      `).join("");
+    }
+
+    function renderPhone() {
+      document.getElementById("phone").innerHTML = `
+        ${statusBar()}
+        ${phoneNav()}
+        <div class="content">${phonePages[current]()}</div>
+      `;
+    }
+
+    function padNav() {
+      const back = parentOf[current];
+      const parentRoute = back ? routes.find(r => r.key === back) : null;
+      // overview 是本功能入口,返回应用主页(原型中无父级,点击无副作用)
+      const backLabel = parentRoute ? parentRoute.label : "返回";
+      const backOnClick = parentRoute ? `setRoute('${back}')` : "void 0";
+      return `
+        <div class="pad-nav">
+          <div class="nav-left">
+            <button class="pad-back" onclick="${backOnClick}" aria-label="返回">
+              ${icon("back")}<span>${backLabel}</span>
+            </button>
+          </div>
+          <h2>${pageTitle()}</h2>
+          <div class="nav-right">${padNavActions[current] || ""}</div>
+        </div>`;
+    }
+
+    function padSubTabs() {
+      const r = routes.find(x => x.key === current);
+      if (!r) return "";
+      const tabs = padSubTabsMap[r.group];
+      if (!tabs || !tabs.includes(current)) return "";
+      return `
+        <div class="pad-subtabs" role="tablist">
+          ${tabs.map(k => {
+            const t = routes.find(x => x.key === k);
+            return `<button role="tab" class="${k === current ? "active" : ""}" onclick="setRoute('${k}')">${t.label}</button>`;
+          }).join("")}
+        </div>`;
+    }
+
+    function renderPad() {
+      document.getElementById("pad").innerHTML = `
+        ${statusBar()}
+        <div class="pad-layout">
+          ${padNav()}
+          ${padSubTabs()}
+          <section class="pad-main">${padPages[current]()}</section>
+        </div>
+      `;
+    }
+
+    renderTabs();
+    renderPhone();
+    renderPad();
+  </script>
+</body>
+</html>
