@@ -72,23 +72,13 @@
       margin: 28px auto 60px;
     }
 
-    .top {
-      display: flex;
-      justify-content: space-between;
-      gap: 22px;
-      align-items: flex-end;
-      margin-bottom: 20px;
-    }
-
-    h1 { margin: 0; font-size: 30px; line-height: 1.2; letter-spacing: -0.01em; }
     .sub { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 720px; }
 
     .route-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      justify-content: flex-end;
-      max-width: 56vw;
+      margin-bottom: 20px;
     }
     .route-tabs button {
       height: 32px;
@@ -1286,36 +1276,63 @@
     .sparkline.amber i { background: linear-gradient(180deg, var(--amber), #fcd34d); }
     .sparkline.mint i { background: linear-gradient(180deg, var(--mint), #6ee7b7); }
 
+    /* Narrower desktop window: stack the two device columns */
     @media (max-width: 1180px) {
       .devices { grid-template-columns: 1fr; }
       .phone-shell { max-width: 420px; }
-      .top { display: block; }
-      .route-tabs { justify-content: flex-start; margin-top: 12px; max-width: 100%; }
     }
 
-    @media (max-width: 720px) {
-      .stage { width: calc(100vw - 16px); margin-top: 16px; }
-      .phone-shell, .pad-shell { padding: 8px; }
+    /* iPad / tablet viewport: hide phone column, let pad app fill the screen */
+    @media (min-width: 481px) and (max-width: 1024px) {
+      .device-phone { display: none; }
+      .device-title { display: none; }
+      .devices { grid-template-columns: 1fr; }
+      .pad-shell {
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        border-radius: 0;
+      }
+      .pad-screen {
+        border-radius: 0;
+        min-height: calc(100vh - 60px);
+      }
+      .stage { width: 100%; margin: 0; }
+      .route-tabs { margin: 0; padding: 8px 12px; }
       .pad-grid, .pad-grid.master-detail, .pad-grid.equal { grid-template-columns: 1fr; }
       .pad-kpis { grid-template-columns: repeat(2, 1fr); }
       .quick { grid-template-columns: 1fr; }
       .summary-band { grid-template-columns: 1fr 1fr; }
       .summary-band > div:nth-child(3) { grid-column: 1 / -1; }
     }
+
+    /* Phone viewport: hide pad column, let phone app fill the screen */
+    @media (max-width: 480px) {
+      .device-pad { display: none; }
+      .device-title { display: none; }
+      .devices { grid-template-columns: 1fr; }
+      .phone-shell {
+        background: transparent;
+        box-shadow: none;
+        padding: 0;
+        border-radius: 0;
+        max-width: 100%;
+      }
+      .screen {
+        border-radius: 0;
+        min-height: calc(100vh - 60px);
+      }
+      .stage { width: 100%; margin: 0; }
+      .route-tabs { margin: 0; padding: 8px; }
+    }
   </style>
 </head>
 <body>
   <main class="stage">
-    <header class="top">
-      <div>
-        <h1>收款功能 App 互动原型</h1>
-        <p class="sub">点击概览页功能卡或右上方导航切换页面。iPhone 沿用单列长图,iPad 改为左侧导航 + 右侧 master-detail 工作台。</p>
-      </div>
-      <nav class="route-tabs" id="tabs"></nav>
-    </header>
+    <nav class="route-tabs" id="tabs"></nav>
 
     <section class="devices">
-      <div>
+      <div class="device-phone">
         <div class="device-title">
           <span>iPhone · 单列长图</span>
           <span class="hint">含底部 tab 栏</span>
@@ -1325,7 +1342,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="device-pad">
         <div class="device-title">
           <span>iPad · 功能页</span>
           <span class="hint">顶部导航 + 分段控件 + 主区</span>
